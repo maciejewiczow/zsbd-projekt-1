@@ -1,0 +1,23 @@
+insert into szkola.Subject (Name, ShortName) values
+    ('j. niemiecki', 'j.niem'),
+    ('przedsiębiorczość', 'przeds'),
+    ('przyroda', 'przyr'),
+    ('wychowanie fizyczne', 'WF'),
+    ('plastyka', 'plast'),
+    ('technika', 'techn'),
+    ('j. włoski', 'j.wł'),
+    ('matematyka', 'mat'),
+    ('informatyka', 'inf'),
+    ('j. angielski', 'j.ang'),
+    ('j. hiszpański', 'j.hiszp'),
+    ('chemia', 'chem'),
+    ('historia', 'hist'),
+    ('biologia', 'biol'),
+    ('religia', 'rel'),
+    ('etyka', 'ety'),
+    ('wychowanie do życia w rodzinie', 'WDŻ'),
+    ('zajęcia z wychowawcą', 'zaj.wych'),
+    ('fizyka', 'fiz'),
+    ('edukacja dla bezpieczeństwa', 'EDB'),
+    ('wiedza o społeczeństwie', 'WOS');
+
