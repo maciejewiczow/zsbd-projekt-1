@@ -7,26 +7,26 @@ VALUES
     ('Tester');
 
 INSERT INTO szkola.GradeValue
-    (NumericValue, SymbolicValue, Name)
+    (NumericValue, SymbolicValue, Name, ShortName)
 VALUES
-    (0, '0', 'brak'),
-    (1, '1', 'niedostateczny'),
-    (1.5, '-1', 'minus niedostateczny'),
-    (1.5, '+1', 'plus niedostateczny'),
-    (1.5, '-2', 'minus dostateczny'),
-    (2, '2', 'dostateczny'),
-    (2.5, '+2', 'plus dostateczny'),
-    (2.5, '-3', 'minus dopuszczający'),
-    (3, '3', 'dopuszczający'),
-    (3.5, '+3', 'plus dopuszczający'),
-    (3.5, '-4', 'minus dobry'),
-    (4, '4', 'dobry'),
-    (4.5, '+4', 'plus dobry'),
-    (4.5, '-5', 'minus bardzo dobry'),
-    (5, '5', 'bardzo dobry'),
-    (5.5, '+5', 'plus bardzo dobry'),
-    (5.5, '-6', 'minus celujący'),
-    (6, '6', 'celujący');
+    (0, '0', 'brak', '-'),
+    (1, '1', 'niedostateczny', 'ndst'),
+    (1.5, '-1', 'minus niedostateczny', '-ndst'),
+    (1.5, '+1', 'plus niedostateczny', '+ndst'),
+    (1.5, '-2', 'minus dostateczny', '-dst'),
+    (2, '2', 'dostateczny', 'dst'),
+    (2.5, '+2', 'plus dostateczny', '+dst'),
+    (2.5, '-3', 'minus dopuszczający', '-dop'),
+    (3, '3', 'dopuszczający', 'dop'),
+    (3.5, '+3', 'plus dopuszczający', '+dop'),
+    (3.5, '-4', 'minus dobry', '-db'),
+    (4, '4', 'dobry', 'db'),
+    (4.5, '+4', 'plus dobry', '+db'),
+    (4.5, '-5', 'minus bardzo dobry', '-bdb'),
+    (5, '5', 'bardzo dobry', 'bdb'),
+    (5.5, '+5', 'plus bardzo dobry', '+bdb'),
+    (5.5, '-6', 'minus celujący', '-cel'),
+    (6, '6', 'celujący', 'cel');
 
 INSERT INTO szkola.Permission
     (Name, Description)
