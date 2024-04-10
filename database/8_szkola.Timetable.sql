@@ -1035,6 +1035,6 @@ FROM (
            ClassSubjectTeacher CST
       GROUP BY ClassID
   ) InnerQ
-INNER JOIN TimetableTemp on TimetableTemp.ClassID = InnerQ.ClassID
+INNER JOIN TimetableTemp on TimetableTemp.ClassID = InnerQ.ClassID;
 
 DROP TEMPORARY TABLE TimetableTemp;

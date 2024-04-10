@@ -4039,11 +4039,11 @@ INSERT INTO
         FROM User
             INNER JOIN Student ON Student.UserID = User.UserID
             INNER JOIN ClassSubjectTeacher ON ClassSubjectTeacher.ClassID = Student.ClassID
-    INNER JOIN GradeTemp ON User.UserID = GradeTemp.Owner_UserID
+    INNER JOIN GradeTemp ON User.UserID = GradeTemp.Owner_UserID;
 
 DROP TEMPORARY TABLE GradeTemp;
 
 -- add values for Weights and timestamps
 UPDATE Grade SET
-    IssuedAt = DATE_SUB(NOW(), INTERVAL RAND()*70000 MINUTE)
+    IssuedAt = DATE_SUB(NOW(), INTERVAL RAND()*70000 MINUTE),
     Weight = 0.5 + RAND()*3.5; -- random [0.5, 4.0]
