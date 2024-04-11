@@ -5,14 +5,11 @@ ALTER TABLE szkola.Class MODIFY GraduationYear int;
 
 use szkola;
 DELIMITER $
-create procedure add_student_to_not_graduated_class(IN user_name varchar(120), IN user_surname varchar(120),
-						    IN user_email varchar(100), IN user_passwordhash binary(60), IN user_address varchar(200), IN user_pesel char(11), IN class_id int)
+create procedure add_student_to_not_graduated_class(IN class_id int)
 	begin
-		DECLARE graduated BOOL;
 		DECLARE current_year int;
 		DECLARE start_year int;
 		DECLARE graduated_year int;
-		DECLARE user_id int;
 
 		select StartYear into start_year from szkola.Class where ClassID=class_id;
 		select GraduationYear into graduated_year from szkola.Class where ClassID=class_id;
@@ -20,7 +17,7 @@ create procedure add_student_to_not_graduated_class(IN user_name varchar(120), I
 
 		IF current_year > graduated_year THEN
    			SIGNAL SQLSTATE '45000'
-    			SET MESSAGE_TEXT = 'The class has been graduated!';
+    		SET MESSAGE_TEXT = 'The class has been graduated!';
 		END IF;
 	END $
 DELIMITER ;
