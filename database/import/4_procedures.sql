@@ -35,7 +35,7 @@ DELIMITER ;
 -- DELETE FROM szkola.User where Email like 'kacperbielak123@o2.pl';
 -- CALL add_student_to_not_graduated_class('Kacper', 'Bielak', 'kacperbielak123@o2.pl', '$2b$04$iQu6MkQgzjJTGd6YnCKfDuW/ag.Ewrr3XQE8c5hU14Io68E5UyEQ.', 'Dzwola 215', '12345678911', 27);
 
--- Procedure 4 - check if specified time slot is available in a user's timetable
+-- Procedure 2 - check if specified time slot is available in a user's timetable
 USE `szkola`;
 DROP procedure IF EXISTS `verify_if_time_slot_is_available_for_user`;
 
@@ -111,6 +111,27 @@ DELIMITER ;
 -- select ClassID from szkola.Class where StartYear=2004;
 -- select * from szkola.Class where StartYear=2004;
 -- CALL update_graduation_year_after_insert(28);
+
+--  4. Function - check that user is student
+use szkola;
+DELIMITER $
+create function check_user_is_student(user_id int) RETURNS bool deterministic
+	begin
+		DECLARE is_student int;
+		DECLARE students_number int;
+
+		SELECT COUNT(UserID) into students_number FROM szkola.Student where UserID=user_id;
+		IF students_number > 0 THEN
+			RETURN true;
+		ELSE 
+			RETURN false;
+		END IF;
+END $
+DELIMITER ;
+
+-- FOR TESTING
+-- set @var_function1 = check_user_is_student(2);
+-- select @var_function1;
 
 -- Procedure 5 - verify if a given user participates in lessons from a fiven subject
 USE `szkola`;
