@@ -24,7 +24,7 @@ create trigger check_timeslots before insert on szkola.Timetable
 	end$$
 delimiter ;
 
--- 3. Trigger - after added a new class - update graduation year - procedure 3
+-- 3. Trigger - after added a new class - update graduation year
 DROP TRIGGER before_class_added;
 use szkola;
 DELIMITER $
@@ -38,7 +38,7 @@ DELIMITER ;
 -- insert into szkola.Class (StartYear, Preceptor_UserID, ProfileID) values (1998, 791, 1);
 -- select * from szkola.Class where StartYear=1998;
 
--- 5. Trigger - before update student to class - checking that class is graduate - procedure 1
+-- 5. Trigger - before update student - checking that class is graduate - procedure 1
 
 -- DROP TRIGGER before_student_update;
 DELIMITER $
@@ -58,3 +58,21 @@ DELIMITER ;
 -- insert into szkola.User (Name, Surname, Email, PasswordHash, Address, UserRoleID, PESEL) values ('kacper', 'bielak',
 --      	'kacperbielak123@o2.pl', '$2b$04$iQu6MkQgzjJTGd6YnCKfDuW/ag.Ewrr3XQE8c5hU14Io68E5UyEQ.', 'Dzwola 21', 1, '12345678911');
 -- update szkola.Student set ClassID=37 where UserID=808;
+
+-- 6. Trigger - before update class - update graduation year
+-- DROP TRIGGER before_class_update;
+DELIMITER $
+CREATE TRIGGER before_class_update BEFORE update on szkola.Class for each row
+	BEGIN
+		IF NEW.StartYear != OLD.StartYear THEN
+			SET NEW.GraduationYear=NEW.StartYear+5;
+		ELSEIF NEW.GraduationYear != OLD.GraduationYear THEN
+			SET NEW.GraduationYear=OLD.StartYear+5;
+		END IF;
+	END $
+DELIMITER ;
+
+-- FOR TESTING
+-- insert into szkola.Class (StartYear, Preceptor_UserID, ProfileID) values (1995, 791, 1);
+-- select * from szkola.Class where StartYear=1996;
+-- update szkola.Class SET StartYear=1996 where StartYear=1995 and Preceptor_UserID=791;
