@@ -23,3 +23,17 @@ create trigger check_timeslots before insert on szkola.Timetable
 		CALL verify_if_time_slot_is_available_for_class(NEW.ClassID, NEW.TimeStart, NEW.TimeEnd, NEW.DayNumber);
 	end$$
 delimiter ;
+
+-- 3. Trigger - after added a new class - update graduation year - procedure 3
+DROP TRIGGER before_class_added;
+use szkola;
+DELIMITER $
+CREATE TRIGGER before_class_added before insert on szkola.Class for each row
+	BEGIN
+		SET NEW.GraduationYear=NEW.StartYear+5;
+    END $
+DELIMITER ;
+
+-- FOR TESTING
+-- insert into szkola.Class (StartYear, Preceptor_UserID, ProfileID) values (1998, 791, 1);
+-- select * from szkola.Class where StartYear=1998;

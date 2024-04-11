@@ -1,3 +1,5 @@
+ALTER TABLE szkola.Class MODIFY GraduationYear int;
+
 --  1. add student if class not graduated
 -- DROP procedure add_student_to_not_graduated_class;
 
@@ -61,30 +63,7 @@ END$$
 
 DELIMITER ;
 
---  3. Procedure - update graduation year after class added
-DROP IF EXISTS procedure update_graduation_year_after_insert;
-use szkola;
-DELIMITER $
-create procedure update_graduation_year_after_insert(IN class_id int)
-	begin
-		DECLARE start_year int;
-		DECLARE graduation_year int;
-
-		SELECT StartYear into start_year FROM szkola.Class where ClassID=class_id;
-		SET graduation_year = start_year+5;
-
-		UPDATE szkola.Class SET GraduationYear=graduation_year WHERE ClassID=class_id;
-	END $
-DELIMITER ;
-
--- FOR TESTING
--- ALTER TABLE szkola.Class MODIFY GraduationYear int;
--- insert into szkola.Class (StartYear, Preceptor_UserID, ProfileID) values (2004, 791, 1);
--- select ClassID from szkola.Class where StartYear=2004;
--- select * from szkola.Class where StartYear=2004;
--- CALL update_graduation_year_after_insert(28);
-
---  4. Function - check that user is student
+--  3. Function - check that user is student
 use szkola;
 DELIMITER $
 create function check_user_is_student(user_id int) RETURNS bool deterministic
