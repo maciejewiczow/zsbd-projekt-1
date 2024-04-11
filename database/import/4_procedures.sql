@@ -117,13 +117,12 @@ use szkola;
 DELIMITER $
 create function check_user_is_student(user_id int) RETURNS bool deterministic
 	begin
-		DECLARE is_student int;
 		DECLARE students_number int;
 
 		SELECT COUNT(UserID) into students_number FROM szkola.Student where UserID=user_id;
 		IF students_number > 0 THEN
 			RETURN true;
-		ELSE 
+		ELSE
 			RETURN false;
 		END IF;
 END $
