@@ -14,3 +14,12 @@ DELIMITER ;
 -- insert into szkola.User (Name, Surname, Email, PasswordHash, Address, UserRoleID, PESEL) values ('kacper', 'bielak',
 --     	'kacperbielak123@o2.pl', '$2b$04$iQu6MkQgzjJTGd6YnCKfDuW/ag.Ewrr3XQE8c5hU14Io68E5UyEQ.', 'Dzwola 21', 1, '12345678911');
 -- insert into szkola.Student (UserID, ClassID) values (805, 9);
+
+-- 2. Trigger - before insterting new lesson to the timetable - checks whether there is a free spot in the timetable of a given class
+delimiter $$
+create trigger check_timeslots before insert on szkola.Timetable
+	for each row
+    begin
+		CALL verify_if_time_slot_is_available_for_class(NEW.ClassID, NEW.TimeStart, NEW.TimeEnd, NEW.DayNumber);
+	end$$
+delimiter ;

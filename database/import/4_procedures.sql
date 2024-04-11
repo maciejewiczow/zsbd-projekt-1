@@ -39,41 +39,18 @@ DROP procedure IF EXISTS `szkola`.`verify_if_time_slot_is_available_for_user`;
 
 DELIMITER $$
 USE `szkola`$$
-CREATE PROCEDURE `verify_if_time_slot_is_available_for_user`(IN user_id INT, IN start_time time, IN end_time time, IN day_nr smallint unsigned)
+CREATE PROCEDURE `verify_if_time_slot_is_available_for_class`(IN class_id INT, IN start_time time, IN end_time time, IN day_nr smallint unsigned)
 BEGIN
 	declare overlapping_rows_count int;
 	SELECT
 		COUNT(*)
 	FROM
-	(
-			SELECT
-				Timetable.*,
-				CST.Teacher_UserID
-			FROM
-				Timetable
-			INNER JOIN Student S on Timetable.ClassID = S.ClassID
-			INNER JOIN ClassSubjectTeacher CST on Timetable.SubjectID = CST.SubjectID and Timetable.ClassID = CST.ClassID
-			WHERE S.UserID = user_id
-		UNION
-			SELECT
-				Timetable.*,
-				CST.Teacher_UserID
-			FROM
-				Timetable
-			INNER JOIN ClassSubjectTeacher CST on Timetable.SubjectID = CST.SubjectID and Timetable.ClassID = CST.ClassID
-			WHERE
-				(CST.Teacher_UserID = user_id AND ReplacementTeacher_UserID IS NULL)
-			OR
-				ReplacementTeacher_UserID = user_id
-	) as T1
-		INNER JOIN Subject ON T1.SubjectID = Subject.SubjectID
-		INNER JOIN Class ON T1.ClassID = Class.ClassID
-		INNER JOIN Profile P on Class.ProfileID = P.ProfileID
-		INNER JOIN User ON User.UserID = T1.Teacher_UserID
+		Timetable
 	WHERE
-		T1.DayNumber = day_nr AND
-        T1.TimeStart <= end_time AND
-        T1.TimeEnd >= start_time
+		ClassID = class_id AND
+		DayNumber = day_nr AND
+        TimeStart <= end_time AND
+        TimeEnd >= start_time
 	INTO overlapping_rows_count;
 
 	if overlapping_rows_count > 0 then
@@ -126,52 +103,3 @@ DELIMITER ;
 -- FOR TESTING
 -- set @var_function1 = check_user_is_student(2);
 -- select @var_function1;
-
--- Procedure 5 - verify if a given user participates in lessons from a fiven subject
-USE `szkola`;
-DROP procedure IF EXISTS `verify_if_user_is_assigned_to_subject`;
-
-USE `szkola`;
-DROP procedure IF EXISTS `szkola`.`verify_if_user_is_assigned_to_subject`;
-;
-
-DELIMITER $$
-USE `szkola`$$
-CREATE PROCEDURE `verify_if_user_is_assigned_to_subject`(in user_id int, in subject_id int)
-BEGIN
-	declare subject_row_count int;
-	SELECT
-		COUNT(*)
-	FROM
-	(
-			SELECT
-				Timetable.*,
-				CST.Teacher_UserID
-			FROM
-				Timetable
-			INNER JOIN Student S on Timetable.ClassID = S.ClassID
-			INNER JOIN ClassSubjectTeacher CST on Timetable.SubjectID = CST.SubjectID and Timetable.ClassID = CST.ClassID
-			WHERE S.UserID = user_id
-		UNION
-			SELECT
-				Timetable.*,
-				CST.Teacher_UserID
-			FROM
-				Timetable
-			INNER JOIN ClassSubjectTeacher CST on Timetable.SubjectID = CST.SubjectID and Timetable.ClassID = CST.ClassID
-			WHERE
-				(CST.Teacher_UserID = user_id AND ReplacementTeacher_UserID IS NULL)
-			OR
-				ReplacementTeacher_UserID = user_id
-	) as T1
-	WHERE
-		T1.SubjectID = subject_id
-	INTO subject_row_count;
-
-	if subject_row_count = 0 then
-		SIGNAL SQLSTATE '40000'
-		SET MESSAGE_TEXT = 'This user does not participate in lessons from this subject';
-	end if;
-END$$
-
-DELIMITER ;
