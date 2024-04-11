@@ -35,6 +35,7 @@ DELIMITER ;
 -- DELETE FROM szkola.User where Email like 'kacperbielak123@o2.pl';
 -- CALL add_student_to_not_graduated_class('Kacper', 'Bielak', 'kacperbielak123@o2.pl', '$2b$04$iQu6MkQgzjJTGd6YnCKfDuW/ag.Ewrr3XQE8c5hU14Io68E5UyEQ.', 'Dzwola 215', '12345678911', 27);
 
+-- Procedure 4 - check if specified time slot is available in a user's timetable
 USE `szkola`;
 DROP procedure IF EXISTS `verify_if_time_slot_is_available_for_user`;
 
@@ -110,3 +111,52 @@ DELIMITER ;
 -- select ClassID from szkola.Class where StartYear=2004;
 -- select * from szkola.Class where StartYear=2004;
 -- CALL update_graduation_year_after_insert(28);
+
+-- Procedure 5 - verify if a given user participates in lessons from a fiven subject
+USE `szkola`;
+DROP procedure IF EXISTS `verify_if_user_is_assigned_to_subject`;
+
+USE `szkola`;
+DROP procedure IF EXISTS `szkola`.`verify_if_user_is_assigned_to_subject`;
+;
+
+DELIMITER $$
+USE `szkola`$$
+CREATE PROCEDURE `verify_if_user_is_assigned_to_subject`(in user_id int, in subject_id int)
+BEGIN
+	declare subject_row_count int;
+	SELECT
+		COUNT(*)
+	FROM
+	(
+			SELECT
+				Timetable.*,
+				CST.Teacher_UserID
+			FROM
+				Timetable
+			INNER JOIN Student S on Timetable.ClassID = S.ClassID
+			INNER JOIN ClassSubjectTeacher CST on Timetable.SubjectID = CST.SubjectID and Timetable.ClassID = CST.ClassID
+			WHERE S.UserID = user_id
+		UNION
+			SELECT
+				Timetable.*,
+				CST.Teacher_UserID
+			FROM
+				Timetable
+			INNER JOIN ClassSubjectTeacher CST on Timetable.SubjectID = CST.SubjectID and Timetable.ClassID = CST.ClassID
+			WHERE
+				(CST.Teacher_UserID = user_id AND ReplacementTeacher_UserID IS NULL)
+			OR
+				ReplacementTeacher_UserID = user_id
+	) as T1
+	WHERE
+		T1.SubjectID = subject_id
+	INTO subject_row_count;
+
+	if subject_row_count = 0 then
+		SIGNAL SQLSTATE '40000'
+		SET MESSAGE_TEXT = 'This user does not participate in lessons from this subject';
+	end if;
+END$$
+
+DELIMITER ;
