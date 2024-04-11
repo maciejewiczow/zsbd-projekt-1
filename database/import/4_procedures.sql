@@ -4,28 +4,28 @@
 use szkola;
 DELIMITER $
 create procedure add_student_to_not_graduated_class(IN user_name varchar(120), IN user_surname varchar(120),
-IN user_email varchar(100), IN user_passwordhash binary(60), IN user_address varchar(200), IN user_pesel char(11), IN class_id int)
-begin
-DECLARE graduated BOOL;
-DECLARE current_year int;
-DECLARE start_year int;
-DECLARE graduated_year int;
-DECLARE user_id int;
+						    IN user_email varchar(100), IN user_passwordhash binary(60), IN user_address varchar(200), IN user_pesel char(11), IN class_id int)
+	begin
+		DECLARE graduated BOOL;
+		DECLARE current_year int;
+		DECLARE start_year int;
+		DECLARE graduated_year int;
+		DECLARE user_id int;
 
-select StartYear into start_year from szkola.Class where ClassID=class_id;
-select GraduationYear into graduated_year from szkola.Class where ClassID=class_id;
-SET current_year = YEAR(CURDATE());
+		select StartYear into start_year from szkola.Class where ClassID=class_id;
+		select GraduationYear into graduated_year from szkola.Class where ClassID=class_id;
+		SET current_year = YEAR(CURDATE());
 
-IF current_year > graduated_year THEN
-    SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'The class has been graduated!';
-ELSE
-    insert into szkola.User (Name, Surname, Email, PasswordHash, Address, UserRoleID, PESEL) values (user_name, user_surname,
-    user_email, user_passwordhash, user_address, 1, user_pesel);
-    SELECT UserID into user_id FROM szkola.User WHERE PESEL LIKE user_pesel;
-    insert into szkola.Student (UserID, ClassID) values (user_id, class_id);
-END IF;
-END $
+		IF current_year > graduated_year THEN
+    			SIGNAL SQLSTATE '45000'
+    			SET MESSAGE_TEXT = 'The class has been graduated!';
+		ELSE
+    			insert into szkola.User (Name, Surname, Email, PasswordHash, Address, UserRoleID, PESEL) values (user_name, user_surname,
+    						user_email, user_passwordhash, user_address, 1, user_pesel);
+    			SELECT UserID into user_id FROM szkola.User WHERE PESEL LIKE user_pesel;
+    			insert into szkola.Student (UserID, ClassID) values (user_id, class_id);
+		END IF;
+	END $
 DELIMITER ;
 
 --  For testing ....
@@ -87,3 +87,26 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+--  3. Procedure - update graduation year after class added
+DROP IF EXISTS procedure update_graduation_year_after_insert;
+use szkola;
+DELIMITER $
+create procedure update_graduation_year_after_insert(IN class_id int)
+	begin
+		DECLARE start_year int;
+		DECLARE graduation_year int;
+
+		SELECT StartYear into start_year FROM szkola.Class where ClassID=class_id;
+		SET graduation_year = start_year+5;
+
+		UPDATE szkola.Class SET GraduationYear=graduation_year WHERE ClassID=class_id;
+	END $
+DELIMITER ;
+
+-- FOR TESTING
+-- ALTER TABLE szkola.Class MODIFY GraduationYear int;
+-- insert into szkola.Class (StartYear, Preceptor_UserID, ProfileID) values (2004, 791, 1);
+-- select ClassID from szkola.Class where StartYear=2004;
+-- select * from szkola.Class where StartYear=2004;
+-- CALL update_graduation_year_after_insert(28);
