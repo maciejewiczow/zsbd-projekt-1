@@ -17,13 +17,8 @@ create procedure add_student_to_not_graduated_class(IN user_name varchar(120), I
 		SET current_year = YEAR(CURDATE());
 
 		IF current_year > graduated_year THEN
-    			SIGNAL SQLSTATE '45000'
+   			SIGNAL SQLSTATE '45000'
     			SET MESSAGE_TEXT = 'The class has been graduated!';
-		ELSE
-    			insert into szkola.User (Name, Surname, Email, PasswordHash, Address, UserRoleID, PESEL) values (user_name, user_surname,
-    						user_email, user_passwordhash, user_address, 1, user_pesel);
-    			SELECT UserID into user_id FROM szkola.User WHERE PESEL LIKE user_pesel;
-    			insert into szkola.Student (UserID, ClassID) values (user_id, class_id);
 		END IF;
 	END $
 DELIMITER ;
