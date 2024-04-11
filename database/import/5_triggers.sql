@@ -102,6 +102,20 @@ delimiter ;
 -- INSERT INTO Grade (GradeValueID, SubjectID, Issuer_UserID, Owner_UserID, Weight, IssuedAt) Values (13, 1, 709, 8, 1, CURRENT_TIMESTAMP());
 -- should pass
 
+delimiter $$
+create trigger check_if_grade_issuer_is_not_a_student_on_update before update on szkola.Grade
+	for each row
+    begin
+		declare is_student bool;
+        select check_user_is_student(NEW.Issuer_UserID) into is_student;
+
+		if is_student = true then
+			signal sqlstate '45000'
+				set MESSAGE_TEXT = 'Students cannot issue grades';
+        end if;
+	end$$
+delimiter ;
+
 -- 6. Trigger - verifies if grade owner is a student before inserting it
 
 delimiter $$
@@ -123,6 +137,19 @@ delimiter ;
 --
 -- INSERT INTO Grade (GradeValueID, SubjectID, Issuer_UserID, Owner_UserID, Weight, IssuedAt) Values (13, 1, 709, 8, 1, CURRENT_TIMESTAMP());
 -- should pass
+
+delimiter $$
+create trigger check_if_grade_owner_is_a_student_on_update before update on szkola.Grade
+	for each row
+    begin
+		declare is_student bool;
+        select check_user_is_student(NEW.Owner_UserID) into is_student;
+		if not is_student then
+			signal sqlstate '45000'
+				set MESSAGE_TEXT = 'Only students can recieve grades';
+        end if;
+	end$$
+delimiter ;
 
 -- 7. Trigger - verifies that the grade issuer is a teacher of the grade subject for the grade owner
 
@@ -154,3 +181,24 @@ delimiter ;
 --
 -- INSERT INTO Grade (GradeValueID, SubjectID, Issuer_UserID, Owner_UserID, Weight, IssuedAt) Values (13,  3, 732, 7, 1, CURRENT_TIMESTAMP());
 -- should pass
+
+delimiter $$
+create trigger check_if_issuer_is_a_teacher_for_the_owner_on_update before update on szkola.Grade
+	for each row
+    begin
+		declare row_count int;
+
+        select COUNT(*)
+			from ClassSubjectTeacher CST
+            inner join
+				Student
+			on Student.ClassID = CST.ClassID
+            WHERE Student.UserID = NEW.Owner_UserID AND CST.Teacher_UserID = NEW.Issuer_UserID
+            into row_count;
+
+		if row_count = 0 then
+			signal sqlstate '45000'
+				set MESSAGE_TEXT = 'This teacher does not theach the supplied subject to this student';
+        end if;
+	end$$
+delimiter ;
