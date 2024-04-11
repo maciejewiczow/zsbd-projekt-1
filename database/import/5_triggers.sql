@@ -16,6 +16,7 @@ DELIMITER ;
 -- insert into szkola.Student (UserID, ClassID) values (805, 9);
 
 -- 2. Trigger - before insterting new lesson to the timetable - checks whether there is a free spot in the timetable of a given class
+
 delimiter $$
 create trigger check_timeslots before insert on szkola.Timetable
 	for each row
@@ -76,3 +77,49 @@ DELIMITER ;
 -- insert into szkola.Class (StartYear, Preceptor_UserID, ProfileID) values (1995, 791, 1);
 -- select * from szkola.Class where StartYear=1996;
 -- update szkola.Class SET StartYear=1996 where StartYear=1995 and Preceptor_UserID=791;
+
+
+-- 6. Trigger - verifies if grade issuer is not a student before inserting
+
+delimiter $$
+create trigger check_if_grade_issuer_is_not_a_student before insert on szkola.Grade
+	for each row
+    begin
+		declare is_student bool;
+        select check_user_is_student(NEW.Issuer_UserID) into is_student;
+
+		if is_student = true then
+			signal sqlstate '45000'
+				set MESSAGE_TEXT = 'Students cannot issue grades';
+        end if;
+	end$$
+delimiter ;
+
+-- TESTING
+-- INSERT INTO Grade (GradeValueID, SubjectID, Issuer_UserID, Owner_UserID, Weight, IssuedAt) Values (13, 1, 3, 5, 1, CURRENT_TIMESTAMP());
+-- should fail
+--
+-- INSERT INTO Grade (GradeValueID, SubjectID, Issuer_UserID, Owner_UserID, Weight, IssuedAt) Values (13, 1, 709, 8, 1, CURRENT_TIMESTAMP());
+-- should pass
+
+-- 7. Trigger - verifies if grade owner is a student before inserting it
+
+delimiter $$
+create trigger check_if_grade_owner_is_a_student before insert on szkola.Grade
+	for each row
+    begin
+		declare is_student bool;
+        select check_user_is_student(NEW.Owner_UserID) into is_student;
+		if not is_student then
+			signal sqlstate '45000'
+				set MESSAGE_TEXT = 'Only students can recieve grades';
+        end if;
+	end$$
+delimiter ;
+
+-- TESTING
+-- INSERT INTO Grade (GradeValueID, SubjectID, Issuer_UserID, Owner_UserID, Weight, IssuedAt) Values (13, 1, 709, 708, 1, CURRENT_TIMESTAMP());
+-- should fail
+--
+-- INSERT INTO Grade (GradeValueID, SubjectID, Issuer_UserID, Owner_UserID, Weight, IssuedAt) Values (13, 1, 709, 8, 1, CURRENT_TIMESTAMP());
+-- should pass
