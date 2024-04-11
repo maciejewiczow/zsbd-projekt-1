@@ -1,4 +1,5 @@
 -- 1. Trigger - before add student to class - checking that class is graduate - procedure 1
+use szkola;
 DELIMITER $
 CREATE TRIGGER before_student_adding BEFORE insert on szkola.Student for each row
 	BEGIN
@@ -26,7 +27,6 @@ create trigger check_timeslots before insert on szkola.Timetable
 delimiter ;
 
 -- 3. Trigger - after added a new class - update graduation year
-DROP TRIGGER before_class_added;
 use szkola;
 DELIMITER $
 CREATE TRIGGER before_class_added before insert on szkola.Class for each row
