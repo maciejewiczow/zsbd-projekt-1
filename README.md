@@ -3,7 +3,7 @@
 2. Wykorzystana w trigerze nr 2 - sprawdza czy dla danej klasy mozna dodac lekcje w danym czasie
 
 # FUNKCJE
-1. Wykorzystana w trigerze nr 6, 7 - sprawdza czy uzytkownik jest studentem
+1. Wykorzystana w trigerze nr 4, 5 - sprawdza czy uzytkownik jest studentem
 
 # Trigery
 1. Przed dodaniem ucznia do klasy sprawdzane jest to czy klasa zakoncyzla juz swoja edukacje - jesli tak to rzucamy blad - procedura nr 1
