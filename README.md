@@ -22,3 +22,8 @@
 6. Lista uczniów klasy, którym wychodzą zagrożenia, z listą przedmiotów zagrożonych
 7. Lista uczniów kwalifikujących sie do stypendium/świadectwa z paskiem za średnią ocen
 8. Lista klas które uczy dany nauczyciel, z przedmiotami których tam uczy
+
+# Uwagi
+Usuniecie tabeli student, dodanie classID do usera (null jesli nie student)
+Rola wychowawca w userze sprawdzana przy dodwaniu klasy i jej wychowawca
+Procedura do wyznaczania liczby osob w klasie i triger sprawdzajacy czy nie ma maksa klasa (np. 30 osob)
