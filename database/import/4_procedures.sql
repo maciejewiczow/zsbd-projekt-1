@@ -67,7 +67,7 @@ create function check_user_is_student(user_id int) RETURNS bool deterministic
 	begin
 		DECLARE students_number int;
 
-		SELECT COUNT(UserID) into students_number FROM szkola.Student where UserID=user_id;
+		SELECT COUNT(UserID) into students_number FROM szkola.User where ClassID is not null;
 		IF students_number > 0 THEN
 			RETURN true;
 		ELSE

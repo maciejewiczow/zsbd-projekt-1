@@ -10,6 +10,6 @@ services:
             - db-storage:/var/lib/mysql
         environment:
             MYSQL_ROOT_PASSWORD: "BlepBlop123"
-
+        command: ["mysqld", "--mysql-native-password=ON"]
 volumes:
     db-storage:

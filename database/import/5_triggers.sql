@@ -1,9 +1,11 @@
 -- 1. Trigger - before add student to class - checking that class is graduate - procedure 1
 use szkola;
 DELIMITER $
-CREATE TRIGGER before_student_adding BEFORE insert on szkola.Student for each row
+CREATE TRIGGER before_student_adding BEFORE insert on szkola.User for each row
 	BEGIN
-		CALL add_student_to_not_graduated_class(NEW.ClassID);
+		IF NEW.ClassID is not null THEN
+			CALL add_student_to_not_graduated_class(NEW.ClassID);
+		END IF;
 	END $
 DELIMITER ;
 
@@ -39,11 +41,11 @@ DELIMITER ;
 -- insert into szkola.Class (StartYear, Preceptor_UserID, ProfileID) values (1998, 791, 1);
 -- select * from szkola.Class where StartYear=1998;
 
--- 3. Trigger - before update student - checking that class is graduate - procedure 1
+-- 4. Trigger - before update student - checking that class is graduate - procedure 1
 
 -- DROP TRIGGER before_student_update;
 DELIMITER $
-CREATE TRIGGER before_student_update BEFORE update on szkola.Student for each row
+CREATE TRIGGER before_student_update BEFORE update on szkola.User for each row
 	BEGIN
 		IF NEW.ClassID != OLD.ClassID THEN
 			CALL add_student_to_not_graduated_class(NEW.ClassID);
@@ -60,7 +62,7 @@ DELIMITER ;
 --      	'kacperbielak123@o2.pl', '$2b$04$iQu6MkQgzjJTGd6YnCKfDuW/ag.Ewrr3XQE8c5hU14Io68E5UyEQ.', 'Dzwola 21', 1, '12345678911');
 -- update szkola.Student set ClassID=37 where UserID=808;
 
--- 4. Trigger - before update class - update graduation year
+-- 5. Trigger - before update class - update graduation year
 -- DROP TRIGGER before_class_update;
 DELIMITER $
 CREATE TRIGGER before_class_update BEFORE update on szkola.Class for each row
@@ -79,7 +81,7 @@ DELIMITER ;
 -- update szkola.Class SET StartYear=1996 where StartYear=1995 and Preceptor_UserID=791;
 
 
--- 5. Trigger - verifies if grade issuer is not a student before inserting
+-- 6. Trigger - verifies if grade issuer is not a student before inserting
 
 delimiter $$
 create trigger check_if_grade_issuer_is_not_a_student before insert on szkola.Grade
@@ -102,6 +104,7 @@ delimiter ;
 -- INSERT INTO Grade (GradeValueID, SubjectID, Issuer_UserID, Owner_UserID, Weight, IssuedAt) Values (13, 1, 709, 8, 1, CURRENT_TIMESTAMP());
 -- should pass
 
+-- 7. Trigger - verifies if grade issuer is student before updating
 delimiter $$
 create trigger check_if_grade_issuer_is_not_a_student_on_update before update on szkola.Grade
 	for each row
@@ -116,7 +119,7 @@ create trigger check_if_grade_issuer_is_not_a_student_on_update before update on
 	end$$
 delimiter ;
 
--- 6. Trigger - verifies if grade owner is a student before inserting it
+-- 8. Trigger - verifies if grade owner is a student before inserting it
 
 delimiter $$
 create trigger check_if_grade_owner_is_a_student before insert on szkola.Grade
@@ -138,6 +141,8 @@ delimiter ;
 -- INSERT INTO Grade (GradeValueID, SubjectID, Issuer_UserID, Owner_UserID, Weight, IssuedAt) Values (13, 1, 709, 8, 1, CURRENT_TIMESTAMP());
 -- should pass
 
+-- 9. Trigger - verifies if grade owner is a student before updating it
+
 delimiter $$
 create trigger check_if_grade_owner_is_a_student_on_update before update on szkola.Grade
 	for each row
@@ -151,7 +156,7 @@ create trigger check_if_grade_owner_is_a_student_on_update before update on szko
 	end$$
 delimiter ;
 
--- 7. Trigger - verifies that the grade issuer is a teacher of the grade subject for the grade owner
+-- 10. Trigger - verifies that the grade issuer is a teacher of the grade subject for the grade owner
 
 delimiter $$
 create trigger check_if_issuer_is_a_teacher_for_the_owner before insert on szkola.Grade
@@ -162,9 +167,9 @@ create trigger check_if_issuer_is_a_teacher_for_the_owner before insert on szkol
         select COUNT(*)
 			from ClassSubjectTeacher CST
             inner join
-				Student
-			on Student.ClassID = CST.ClassID
-            WHERE Student.UserID = NEW.Owner_UserID AND CST.Teacher_UserID = NEW.Issuer_UserID
+				User
+			on User.ClassID = CST.ClassID
+            WHERE User.UserID = NEW.Owner_UserID AND CST.Teacher_UserID = NEW.Issuer_UserID
             into row_count;
 
 		if row_count = 0 then
@@ -182,6 +187,8 @@ delimiter ;
 -- INSERT INTO Grade (GradeValueID, SubjectID, Issuer_UserID, Owner_UserID, Weight, IssuedAt) Values (13,  3, 732, 7, 1, CURRENT_TIMESTAMP());
 -- should pass
 
+-- 11. Trigger - verifies that the grade issuer is a teacher of the grade subject for the grade owner
+
 delimiter $$
 create trigger check_if_issuer_is_a_teacher_for_the_owner_on_update before update on szkola.Grade
 	for each row
@@ -191,9 +198,9 @@ create trigger check_if_issuer_is_a_teacher_for_the_owner_on_update before updat
         select COUNT(*)
 			from ClassSubjectTeacher CST
             inner join
-				Student
-			on Student.ClassID = CST.ClassID
-            WHERE Student.UserID = NEW.Owner_UserID AND CST.Teacher_UserID = NEW.Issuer_UserID
+				User
+			on User.ClassID = CST.ClassID
+            WHERE User.UserID = NEW.Owner_UserID AND CST.Teacher_UserID = NEW.Issuer_UserID
             into row_count;
 
 		if row_count = 0 then

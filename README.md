@@ -9,9 +9,11 @@
 1. Przed dodaniem ucznia do klasy sprawdzane jest to czy klasa zakoncyzla juz swoja edukacje - jesli tak to rzucamy blad - procedura nr 1
 2. Przed dodaniem nowej lekcji do planu zajęć sprawdzamy czy nowy wpis nie nachodzi czasowo na inne zajęcia
 3. Po dodaniu nowej klasy automatycznie wyznaczany jest rok ukonczenia szkoly
-4. Przed dodaniem/aktualizacją oceny sprawdzamy czy user otrzymujacy ocene na pewno jest uczniem.
-5. Przed dodaniem/aktualizacją oceny sprawdzamy czy user dodajcy ocene na pewno nie jest uczniem.
-6. Przed dodaniem/aktualizacją oceny sprawdzamy, czy nauczyciel wystawiający ocenę na pewno naucza ucznia otrzymującego ocenę przedmiotu z którego ocena jest wystawiana.
+4. W przypadku modyfikacji klasy studenta sprawdzane jest to czy napewno ta klasa nie zakonczyla juz edukacji.
+5. W przypadku modyfikacji klasy automatycznie wyznaczany jest rok ukonczenia klasy
+6 i 7. Przed dodaniem/aktualizacją oceny sprawdzamy czy user dodajcy ocene na pewno nie jest uczniem.
+8 i 9. Przed dodaniem/aktualizacją oceny sprawdzamy czy user otrzymujacy ocene na pewno jest uczniem.
+10 i 11. Przed dodaniem/aktualizacją oceny sprawdzamy, czy nauczyciel wystawiający ocenę na pewno naucza ucznia otrzymującego ocenę przedmiotu z którego ocena jest wystawiana.
 
 # Widoki
 1. Lista wszystkich ocen ucznia
@@ -24,6 +26,6 @@
 8. Lista klas które uczy dany nauczyciel, z przedmiotami których tam uczy
 
 # Uwagi
-Usuniecie tabeli student, dodanie classID do usera (null jesli nie student)
+Usuniecie tabeli student, dodanie classID do usera (null jesli nie student) - zrobione
 Rola wychowawca w userze sprawdzana przy dodwaniu klasy i jej wychowawca
 Procedura do wyznaczania liczby osob w klasie i triger sprawdzajacy czy nie ma maksa klasa (np. 30 osob)

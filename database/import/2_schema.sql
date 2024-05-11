@@ -98,6 +98,9 @@ create table if not exists szkola.Class
 )
     comment 'Klasy uczące się w szkole';
 
+ALTER TABLE szkola.User ADD ClassID int;
+ALTER TABLE szkola.User ADD constraint FOREIGN KEY (ClassID) REFERENCES szkola.Class(ClassID);
+
 create table if not exists szkola.ClassSubjectTeacher
 (
     SubjectID      int not null,
@@ -133,19 +136,6 @@ create table if not exists szkola.Grade
         foreign key (Owner_UserID) references szkola.User (UserID)
 )
     comment 'Oceny';
-
-create table if not exists szkola.Student
-(
-    UserID  int not null,
-    ClassID int not null,
-    primary key (UserID),
-    constraint Student_Class_ClassID_fk
-        foreign key (ClassID) references szkola.Class (ClassID),
-    constraint Student_User_UserID_fk
-        foreign key (UserID) references szkola.User (UserID)
-            on update cascade on delete cascade
-)
-    comment 'Przynależność do danej klasy użytkownika z rolą Student';
 
 create table if not exists szkola.Timetable
 (
