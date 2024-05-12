@@ -60,14 +60,14 @@ END$$
 
 DELIMITER ;
 
---  3. Function - check that user is student
+--  1. Function - check that user is student
 use szkola;
 DELIMITER $
 create function check_user_is_student(user_id int) RETURNS bool deterministic
 	begin
 		DECLARE students_number int;
 
-		SELECT COUNT(UserID) into students_number FROM szkola.User where ClassID is not null;
+		SELECT COUNT(UserID) into students_number FROM szkola.User where ClassID is not null and UserID=user_id;
 		IF students_number > 0 THEN
 			RETURN true;
 		ELSE
@@ -79,3 +79,21 @@ DELIMITER ;
 -- FOR TESTING
 -- set @var_function1 = check_user_is_student(2);
 -- select @var_function1;
+
+--  2. Function - check that user is teacher and not already supervising teacher
+use szkola;
+DELIMITER $
+create function check_user_is_teacher_and_not_supervising(user_id int) RETURNS bool deterministic
+	begin
+		DECLARE teacher_number int;
+		DECLARE supervising_number int;
+
+		SELECT COUNT(UserID) into teacher_number FROM szkola.User where UserRoleID=2 and UserID=user_id;
+		SELECT COUNT(ClassID) into supervising_number FROM szkola.Class where Preceptor_UserID=user_id;
+		IF teacher_number > 0 AND supervising_number=0  THEN
+			RETURN true;
+		ELSE
+			RETURN false;
+		END IF;
+END $
+DELIMITER ;

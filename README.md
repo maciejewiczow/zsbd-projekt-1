@@ -1,9 +1,10 @@
 # PROCEDURY
-1. Wykorzystana w trigerze nr 1 - sprawdza czy dana klasa zakonczyla juz swoja edukacje
+1. Wykorzystana w trigerze nr 1, 4 - sprawdza czy dana klasa zakonczyla juz swoja edukacje
 2. Wykorzystana w trigerze nr 2 - sprawdza czy dla danej klasy mozna dodac lekcje w danym czasie
 
 # FUNKCJE
-1. Wykorzystana w trigerze nr 4, 5 - sprawdza czy uzytkownik jest studentem
+1. Wykorzystana w trigerze nr 6, 7, 8, 9 - sprawdza czy uzytkownik jest studentem
+2. Wykorzystana w trigerze nr 12 - sprawdza czy uzytkownik jest nauczycielem i czy nie ma juz wychowastwa
 
 # Trigery
 1. Przed dodaniem ucznia do klasy sprawdzane jest to czy klasa zakoncyzla juz swoja edukacje - jesli tak to rzucamy blad - procedura nr 1
@@ -27,5 +28,5 @@
 
 # Uwagi
 Usuniecie tabeli student, dodanie classID do usera (null jesli nie student) - zrobione
-Rola wychowawca w userze sprawdzana przy dodwaniu klasy i jej wychowawca
+Rola wychowawca w userze sprawdzana przy dodwaniu klasy i jej wychowawca - zrobione
 Procedura do wyznaczania liczby osob w klasie i triger sprawdzajacy czy nie ma maksa klasa (np. 30 osob)
