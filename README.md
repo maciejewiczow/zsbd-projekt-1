@@ -1,4 +1,7 @@
+# Ogólne
 W ramach przedmiotu Zawansowane architektury baz danych stworzony został system bazodanowy do obsługi szkoły (dziennik elektoryniczny) w realcyjnej bazie danych MySQL. Do celów prezentacyjnych zaimplementowany została również aplikacji webowa w języku TypeScript z wykorzystaniem frameworka React.
+
+Struktura bazy danych przedstawiona została za pomocą diagramu ERD w pliku newSchema.png.
 
 # PROCEDURY
 1. Wykorzystana w trigerze nr 1, 4 - sprawdza czy dana klasa zakonczyla juz swoja edukacje
