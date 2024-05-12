@@ -1,4 +1,4 @@
-W ramach przedmiotu Zawansowane architektury baz danych stworzony został system bazodanowy do obsługi szkoły (dziennik elektoryniczny) w realcyjnej bazie danych MongoDB. Do celów prezentacyjnych zaimplementowany została również aplikacji webowa w języku TypeScript z wykorzystaniem frameworka React.
+W ramach przedmiotu Zawansowane architektury baz danych stworzony został system bazodanowy do obsługi szkoły (dziennik elektoryniczny) w realcyjnej bazie danych MySQL. Do celów prezentacyjnych zaimplementowany została również aplikacji webowa w języku TypeScript z wykorzystaniem frameworka React.
 
 # PROCEDURY
 1. Wykorzystana w trigerze nr 1, 4 - sprawdza czy dana klasa zakonczyla juz swoja edukacje
