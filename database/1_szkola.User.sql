@@ -800,4 +800,3 @@ insert into szkola.User (Name, Surname, Email, PasswordHash, Address, UserRoleID
  ('Pippo', 'Benzie', 'pbenzie2p@hhs.gov', '$2b$04$iQu6MkQgzjJTGd6YnCKfDuW/ag.Ewrr3XQE8c5hU14Io68E5UyEQ.', '56151 Weeping Birch Hill', 2	, '23102392192'),
  ('Sayre', 'Posselt', 'sposselt2q@nymag.com', '$2b$04$iQu6MkQgzjJTGd6YnCKfDuW/ag.Ewrr3XQE8c5hU14Io68E5UyEQ.', '2 Schiller Trail', 2	, '73032600731'),
  ('Suzy', 'Arnall', 'sarnall2r@google.co.uk', '$2b$04$iQu6MkQgzjJTGd6YnCKfDuW/ag.Ewrr3XQE8c5hU14Io68E5UyEQ.', '9031 Sachs Center', 2	, '54060462052');
-

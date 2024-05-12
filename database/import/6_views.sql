@@ -35,7 +35,7 @@ create procedure all_grades_for_class_and_subject(IN class_id int, IN subject_id
 	begin
         SELECT
             GradeID,
-            Student.UserID,
+            User.UserID,
             GV.NumericValue,
             GV.SymbolicValue,
             GV.Name,
@@ -43,9 +43,9 @@ create procedure all_grades_for_class_and_subject(IN class_id int, IN subject_id
         FROM
             Grade
             INNER JOIN GradeValue GV on Grade.GradeValueID = GV.GradeValueID
-            INNER JOIN Student ON Student.UserID = Grade.Owner_UserID
+            INNER JOIN User ON User.UserID = Grade.Owner_UserID
         WHERE
-            Student.ClassID = class_id AND Grade.SubjectID = subject_id;
+            User.ClassID = class_id AND Grade.SubjectID = subject_id;
     END $
 DELIMITER ;
 
@@ -78,9 +78,9 @@ create procedure lesson_plan_for_user(IN user_id int)
                     CST.Teacher_UserID
                 FROM
                     Timetable
-                INNER JOIN Student S on Timetable.ClassID = S.ClassID
+                INNER JOIN User U on Timetable.ClassID = U.ClassID
                 INNER JOIN ClassSubjectTeacher CST on Timetable.SubjectID = CST.SubjectID and Timetable.ClassID = CST.ClassID
-                WHERE S.UserID = user_id
+                WHERE U.UserID = user_id
             UNION
                 SELECT
                     Timetable.*,
@@ -120,8 +120,7 @@ create view top_10_students as
         Grade
         INNER JOIN GradeValue GV on Grade.GradeValueID = GV.GradeValueID
         INNER JOIN User U on Grade.Owner_UserID = U.UserID
-        INNER JOIN Student S on U.UserID = S.UserID
-        INNER JOIN Class C on S.ClassID = C.ClassID
+        INNER JOIN Class C on U.ClassID = C.ClassID
         INNER JOIN Profile P on C.ProfileID = P.ProfileID
     GROUP BY Grade.Owner_UserID
     ORDER BY
@@ -135,7 +134,7 @@ create view top_10_students as
 -- 5. View - top 10 classes
 create view top_10_classes as
     SELECT
-        Student.ClassID,
+        User.ClassID,
         SUM(GV.NumericValue)/SUM(Grade.Weight) Average,
         YEAR(CURRENT_DATE()) - C.StartYear Year,
         P.ShortName Profile_ShortName,
@@ -146,12 +145,12 @@ create view top_10_classes as
         C.Preceptor_UserID
     FROM
         Grade
-        INNER JOIN Student ON Grade.Owner_UserID = Student.UserID
+        INNER JOIN User ON Grade.Owner_UserID = User.UserID
         INNER JOIN GradeValue GV on Grade.GradeValueID = GV.GradeValueID
-        INNER JOIN Class C on Student.ClassID = C.ClassID
+        INNER JOIN Class C on User.ClassID = C.ClassID
         INNER JOIN Profile P on C.ProfileID = P.ProfileID
         INNER JOIN User U on C.Preceptor_UserID = U.UserID
-    GROUP BY Student.ClassID
+    GROUP BY User.ClassID
     Order BY Average DESC
     LIMIT 10;
 

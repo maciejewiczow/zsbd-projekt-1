@@ -4037,8 +4037,7 @@ INSERT INTO
     ClassSubjectTeacher.Teacher_UserID AS Issuer_UserID,
         GradeValueID
         FROM User
-            INNER JOIN Student ON Student.UserID = User.UserID
-            INNER JOIN ClassSubjectTeacher ON ClassSubjectTeacher.ClassID = Student.ClassID
+            INNER JOIN ClassSubjectTeacher ON ClassSubjectTeacher.ClassID = User.ClassID
     INNER JOIN GradeTemp ON User.UserID = GradeTemp.Owner_UserID;
 
 DROP TEMPORARY TABLE GradeTemp;
