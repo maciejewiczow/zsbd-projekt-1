@@ -215,7 +215,12 @@ delimiter ;
 DELIMITER $
 CREATE TRIGGER before_class_add BEFORE insert on szkola.Class for each row
 	BEGIN
-		CALL check_user_is_teacher_and_not_supervising(NEW.Preceptor_UserID);
+		declare is_teacher_and_not_supervising bool;
+		select check_user_is_teacher_and_not_supervising(NEW.Preceptor_UserID) into is_teacher_and_not_supervising;
+		if not is_teacher_and_not_supervising then
+			signal sqlstate '45000'
+				set MESSAGE_TEXT = 'User is not a teacher or already has a supervising';
+		end if;
 	END $
 DELIMITER ;
 
@@ -224,8 +229,13 @@ DELIMITER ;
 DELIMITER $
 CREATE TRIGGER before_class_update BEFORE update on szkola.Class for each row
 	BEGIN
+		declare is_teacher_and_not_supervising bool;
 		IF NEW.Preceptor_UserID != OLD.Preceptor_UserID THEN
-			CALL check_user_is_teacher_and_not_supervising(NEW.Preceptor_UserID);
-		END IF;
+			select check_user_is_teacher_and_not_supervising(NEW.Preceptor_UserID) into is_teacher_and_not_supervising;
+			if not is_teacher_and_not_supervising then
+				signal sqlstate '45000'
+					set MESSAGE_TEXT = 'User is not a teacher or already has a supervising';
+			end if;
+		end if;
 	END $
 DELIMITER ;
