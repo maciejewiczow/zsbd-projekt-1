@@ -209,3 +209,23 @@ create trigger check_if_issuer_is_a_teacher_for_the_owner_on_update before updat
         end if;
 	end$$
 delimiter ;
+
+-- 12. Trigger - before add class - checking that user is teacher and not supervising teacher - function 2
+
+DELIMITER $
+CREATE TRIGGER before_class_add BEFORE insert on szkola.Class for each row
+	BEGIN
+		CALL check_user_is_teacher_and_not_supervising(NEW.Preceptor_UserID);
+	END $
+DELIMITER ;
+
+-- 13. Trigger - before update class - checking that user is teacher and not supervising teacher - function 2
+
+DELIMITER $
+CREATE TRIGGER before_class_update BEFORE update on szkola.Class for each row
+	BEGIN
+		IF NEW.Preceptor_UserID != OLD.Preceptor_UserID THEN
+			CALL check_user_is_teacher_and_not_supervising(NEW.Preceptor_UserID);
+		END IF;
+	END $
+DELIMITER ;

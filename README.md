@@ -1,9 +1,10 @@
 # PROCEDURY
-1. Wykorzystana w trigerze nr 1 - sprawdza czy dana klasa zakonczyla juz swoja edukacje
+1. Wykorzystana w trigerze nr 1, 4 - sprawdza czy dana klasa zakonczyla juz swoja edukacje
 2. Wykorzystana w trigerze nr 2 - sprawdza czy dla danej klasy mozna dodac lekcje w danym czasie
 
 # FUNKCJE
-1. Wykorzystana w trigerze nr 4, 5 - sprawdza czy uzytkownik jest studentem
+1. Wykorzystana w trigerze nr 6, 7, 8, 9 - sprawdza czy uzytkownik jest studentem
+2. Wykorzystana w trigerze nr 12 - sprawdza czy uzytkownik jest nauczycielem i czy nie ma juz wychowastwa
 
 # Trigery
 1. Przed dodaniem ucznia do klasy sprawdzane jest to czy klasa zakoncyzla juz swoja edukacje - jesli tak to rzucamy blad - procedura nr 1
