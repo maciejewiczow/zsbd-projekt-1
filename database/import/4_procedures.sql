@@ -97,3 +97,23 @@ create function check_user_is_teacher_and_not_supervising(user_id int) RETURNS b
 		END IF;
 END $
 DELIMITER ;
+
+
+DROP function IF EXISTS `class_user_count`;
+
+DELIMITER $$
+USE `szkola`$$
+CREATE FUNCTION `class_user_count` (class_id int)
+RETURNS INTEGER
+DETERMINISTIC
+BEGIN
+	declare result int;
+
+    select COUNT(ClassID) from User where ClassID is not null GROUP BY ClassID HAVING ClassID = class_id into result;
+
+	RETURN result;
+END$$
+
+DELIMITER ;
+
+

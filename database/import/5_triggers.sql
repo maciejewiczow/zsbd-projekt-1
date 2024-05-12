@@ -239,3 +239,23 @@ CREATE TRIGGER before_class_update BEFORE update on szkola.Class for each row
 		end if;
 	END $
 DELIMITER ;
+
+DELIMITER $
+CREATE TRIGGER verify_class_capacity_before_adding_user BEFORE insert on szkola.User for each row
+	BEGIN
+		IF NEW.ClassID is not null and class_user_count(NEW.ClassID) >= 40 THEN
+			signal sqlstate '45000'
+				set MESSAGE_TEXT = 'This class is already full!';
+		END IF;
+	END $
+DELIMITER ;
+
+DELIMITER $
+CREATE TRIGGER verify_class_capacity_before_updating_user BEFORE update on szkola.User for each row
+	BEGIN
+		IF NEW.ClassID is not null and class_user_count(NEW.ClassID) >= 40 THEN
+			signal sqlstate '45000'
+				set MESSAGE_TEXT = 'This class is already full!';
+		END IF;
+	END $
+DELIMITER ;
