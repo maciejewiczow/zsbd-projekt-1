@@ -28,5 +28,5 @@
 
 # Uwagi
 Usuniecie tabeli student, dodanie classID do usera (null jesli nie student) - zrobione
-Rola wychowawca w userze sprawdzana przy dodwaniu klasy i jej wychowawca
+Rola wychowawca w userze sprawdzana przy dodwaniu klasy i jej wychowawca - zrobione
 Procedura do wyznaczania liczby osob w klasie i triger sprawdzajacy czy nie ma maksa klasa (np. 30 osob)
