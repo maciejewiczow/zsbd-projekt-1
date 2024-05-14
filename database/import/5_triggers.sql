@@ -240,6 +240,8 @@ CREATE TRIGGER before_class_update BEFORE update on szkola.Class for each row
 	END $
 DELIMITER ;
 
+-- 14. Trigger - before add user/student - checking that class isn't full - function 3
+
 DELIMITER $
 CREATE TRIGGER verify_class_capacity_before_adding_user BEFORE insert on szkola.User for each row
 	BEGIN
@@ -249,6 +251,8 @@ CREATE TRIGGER verify_class_capacity_before_adding_user BEFORE insert on szkola.
 		END IF;
 	END $
 DELIMITER ;
+
+-- 15. Trigger - before modify student class - checking that class isn't full - function 3
 
 DELIMITER $
 CREATE TRIGGER verify_class_capacity_before_updating_user BEFORE update on szkola.User for each row

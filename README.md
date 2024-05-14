@@ -9,7 +9,8 @@ Struktura bazy danych przedstawiona została za pomocą diagramu ERD w pliku new
 
 # FUNKCJE
 1. Wykorzystana w trigerze nr 6, 7, 8, 9 - sprawdza czy uzytkownik jest studentem
-2. Wykorzystana w trigerze nr 12 - sprawdza czy uzytkownik jest nauczycielem i czy nie ma juz wychowastwa
+2. Wykorzystana w trigerze nr 12, 13 - sprawdza czy uzytkownik jest nauczycielem i czy nie ma juz wychowastwa
+3. Wykorzystana w trigerze nr 14, 15 - wyznacza liczbe uczniow w klasie
 
 # Trigery
 1. Przed dodaniem ucznia do klasy sprawdzane jest to czy klasa zakoncyzla juz swoja edukacje - jesli tak to rzucamy blad - procedura nr 1
@@ -23,8 +24,10 @@ Struktura bazy danych przedstawiona została za pomocą diagramu ERD w pliku new
 9. Przed aktualizacją oceny sprawdzamy czy user otrzymujacy ocene na pewno jest uczniem.
 10. Przed aktualizacją oceny sprawdzamy, czy nauczyciel wystawiający ocenę na pewno naucza ucznia otrzymującego ocenę przedmiotu z którego ocena jest wystawiana.
 11. Przed aktualizacją oceny sprawdzamy, czy nauczyciel wystawiający ocenę na pewno naucza ucznia otrzymującego ocenę przedmiotu z którego ocena jest wystawiana.
-12. Przed dodaniem ucznia do klasy sprawdzane jest czy limi liczby uczniow w klasie nie zostal przekroczony.
-12. Przed updatem ucznia - zmiany klasy sprawdzane jest czy limi liczby uczniow w klasie nie zostal przekroczony.
+12. Przed dodaniem klasy sprawdzany jest wychowawca - czy na pewno jest nauczycielem i czy nie jest juz wychowawca
+13. Przed updatem klasy - zmiana wychowawcy - sprawdzany jest czy na pewno jest nauczycielem i czy nie jest juz wychowawca
+14. Przed dodaniem ucznia do klasy sprawdzane jest czy limit liczby uczniow w klasie nie zostal przekroczony.
+15. Przed updatem ucznia - zmiany klasy sprawdzane jest czy limit liczby uczniow w klasie nie zostal przekroczony.
 
 # Widoki
 1. Lista wszystkich ocen ucznia

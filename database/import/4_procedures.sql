@@ -98,8 +98,8 @@ create function check_user_is_teacher_and_not_supervising(user_id int) RETURNS b
 END $
 DELIMITER ;
 
-
-DROP function IF EXISTS `class_user_count`;
+--  3. Function - check users count in the class by class_id
+-- DROP function IF EXISTS `class_user_count`;
 
 DELIMITER $$
 USE `szkola`$$
