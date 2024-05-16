@@ -136,7 +136,7 @@ DROP procedure IF EXISTS `szkola`.`lesson_plan_for_class`;
 
 DELIMITER $$
 USE `szkola`$$
-CREATE DEFINER=`root`@`%` PROCEDURE `lesson_plan_for_class`(IN classId int)
+CREATE DEFINER=`root`@`%` PROCEDURE `lesson_plan_for_class`(IN classIdParam int)
 BEGIN
 	SELECT TInner.*, U.Name as ReplacementTeacherName, U.Surname as ReplacementTeacherSurname from ( SELECT
 		T.TimetableID,
@@ -149,9 +149,9 @@ BEGIN
 		U.Surname as TeacherSurname,
         T.ReplacementTeacher_UserID
 	from (
-		select * from Timetable WHERE ClassID = classId
+		select * from Timetable WHERE ClassID = classIdParam
 	) as T
-	inner join ClassSubjectTeacher CST on CST.SubjectID = T.SubjectID and CST.ClassID = classId
+	inner join ClassSubjectTeacher CST on CST.SubjectID = T.SubjectID and CST.ClassID = classIdParam
 	inner join Subject S on S.SubjectID = T.SubjectID
 	inner join User U on U.UserID = CST.Teacher_UserID
     ) as TInner left join User U on U.UserID = TInner.ReplacementTeacher_UserID ORDER BY TInner.DayNumber ASC, TInner.TimeStart ASC;
