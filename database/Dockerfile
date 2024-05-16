@@ -1,5 +1,6 @@
 FROM mysql:latest
 
+COPY my.cnf /etc/mysql/my.cnf
 COPY ./import/*.sql /docker-entrypoint-initdb.d
 RUN mkdir /test-data
 COPY ./*.sql /test-data
