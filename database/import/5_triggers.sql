@@ -227,7 +227,7 @@ DELIMITER ;
 -- 13. Trigger - before update class - checking that user is teacher and not supervising teacher - function 2
 
 DELIMITER $
-CREATE TRIGGER before_class_update BEFORE update on szkola.Class for each row
+CREATE TRIGGER before_class_update_2 BEFORE update on szkola.Class for each row
 	BEGIN
 		declare is_teacher_and_not_supervising bool;
 		IF NEW.Preceptor_UserID != OLD.Preceptor_UserID THEN

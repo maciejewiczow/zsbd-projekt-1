@@ -116,4 +116,45 @@ END$$
 
 DELIMITER ;
 
+DROP procedure IF EXISTS `calculate_class_gpa`;
 
+DELIMITER $$
+USE `szkola`$$
+CREATE PROCEDURE `calculate_class_gpa` (IN classId int)
+BEGIN
+	SELECT SUM(GV.NumericValue*G.Weight)/SUM(G.Weight) as GPA FROM Grade G inner join User U on G.Owner_UserID = U.UserID inner join GradeValue GV on GV.GradeValueID = G.GradeValueID WHERE U.ClassID = classId group by ClassID;
+END$$
+
+DELIMITER ;
+
+
+USE `szkola`;
+DROP procedure IF EXISTS `lesson_plan_for_class`;
+
+USE `szkola`;
+DROP procedure IF EXISTS `szkola`.`lesson_plan_for_class`;
+
+DELIMITER $$
+USE `szkola`$$
+CREATE DEFINER=`root`@`%` PROCEDURE `lesson_plan_for_class`(IN classId int)
+BEGIN
+	SELECT TInner.*, U.Name as ReplacementTeacherName, U.Surname as ReplacementTeacherSurname from ( SELECT
+		T.TimetableID,
+		T.TimeStart,
+		T.TimeEnd,
+		T.DayNumber,
+		S.Name as SubjectName,
+        CST.Teacher_UserID,
+		U.Name as TeacherName,
+		U.Surname as TeacherSurname,
+        T.ReplacementTeacher_UserID
+	from (
+		select * from Timetable WHERE ClassID = classId
+	) as T
+	inner join ClassSubjectTeacher CST on CST.SubjectID = T.SubjectID and CST.ClassID = classId
+	inner join Subject S on S.SubjectID = T.SubjectID
+	inner join User U on U.UserID = CST.Teacher_UserID
+    ) as TInner left join User U on U.UserID = TInner.ReplacementTeacher_UserID ORDER BY TInner.DayNumber ASC, TInner.TimeStart ASC;
+END$$
+
+DELIMITER ;

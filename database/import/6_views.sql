@@ -213,3 +213,19 @@ DELIMITER ;
 
 -- FOR TESTING
 -- call subjects_for_teacher(701);
+
+CREATE VIEW `all_classes` AS
+    SELECT
+        `C`.`ClassID` AS `ClassID`,
+        (YEAR(CURDATE()) - `C`.`StartYear`) AS `ClassYear`,
+        `P`.`ShortName` AS `ShortName`,
+        `U`.`UserID` AS `PerceptorID`,
+        `U`.`Name` AS `PerceptorName`,
+        `U`.`Surname` AS `PerceptorSurname`
+    FROM
+        ((`Class` `C`
+        JOIN `Profile` `P` ON ((`P`.`ProfileID` = `C`.`ProfileID`)))
+        JOIN `User` `U` ON ((`U`.`UserID` = `C`.`Preceptor_UserID`)))
+    WHERE
+        ((YEAR(CURDATE()) - `C`.`StartYear`) <= 9)
+    ORDER BY (YEAR(CURDATE()) - `C`.`StartYear`) , `P`.`ShortName`;
