@@ -1,7 +1,7 @@
 -- 1. View - List of all student grades
 use szkola;
 DELIMITER $
-create procedure all_students(IN user_id int)
+create procedure all_students_grades(IN user_id int)
 	begin
 		SELECT
             Grade.GradeID,
@@ -26,7 +26,7 @@ END $
 DELIMITER ;
 
 -- FOR TESTING
--- call all_students(1);
+-- call all_students_grades(1);
 
 -- 2. View - List of class grades in a given subject (journal)
 use szkola;
@@ -55,20 +55,20 @@ DELIMITER ;
 -- 3. View - Lesson plan for a given user
 use szkola;
 DELIMITER $
-create procedure lesson_plan_for_user(IN user_id int)
-	begin
+CREATE PROCEDURE `lesson_plan_for_user`(IN param_user_id int)
+begin
+        	Select TInner.*, U.Name as ReplacementTeacherName, U.Surname as ReplacementTeacherSurname from (
         SELECT
             T1.TimetableID,
             T1.TimeStart,
             T1.TimeEnd,
             T1.DayNumber,
-            Subject.Name,
-            Subject.ShortName,
+            Class.ClassID,
+            Subject.Name as SubjectName,
             YEAR(CURRENT_DATE()) - Class.StartYear AS ClassYear,
-            P.ShortName,
-            P.FullName,
-            User.Name,
-            User.Surname,
+            P.ShortName as ClassShortName,
+            User.Name as TeacherName,
+            User.Surname as TeacherSurname,
             T1.Teacher_UserID,
             T1.ReplacementTeacher_UserID
         FROM
@@ -80,7 +80,7 @@ create procedure lesson_plan_for_user(IN user_id int)
                     Timetable
                 INNER JOIN User U on Timetable.ClassID = U.ClassID
                 INNER JOIN ClassSubjectTeacher CST on Timetable.SubjectID = CST.SubjectID and Timetable.ClassID = CST.ClassID
-                WHERE U.UserID = user_id
+                WHERE U.UserID = param_user_id
             UNION
                 SELECT
                     Timetable.*,
@@ -89,18 +89,19 @@ create procedure lesson_plan_for_user(IN user_id int)
                     Timetable
                 INNER JOIN ClassSubjectTeacher CST on Timetable.SubjectID = CST.SubjectID and Timetable.ClassID = CST.ClassID
                 WHERE
-                    (CST.Teacher_UserID = user_id AND ReplacementTeacher_UserID IS NULL)
+                    (CST.Teacher_UserID = param_user_id AND ReplacementTeacher_UserID IS NULL)
                 OR
-                    ReplacementTeacher_UserID = user_id
+                    ReplacementTeacher_UserID = param_user_id
         ) as T1
             INNER JOIN Subject ON T1.SubjectID = Subject.SubjectID
             INNER JOIN Class ON T1.ClassID = Class.ClassID
             INNER JOIN Profile P on Class.ProfileID = P.ProfileID
             INNER JOIN User ON User.UserID = T1.Teacher_UserID
-        ORDER BY
-            DayNumber ASC,
-            TimeStart ASC;
-    END $
+            ) as TInner left join User U on TInner.ReplacementTeacher_UserID = U.UserID
+            ORDER BY
+            TInner.DayNumber ASC,
+            TInner.TimeStart ASC;
+    END
 DELIMITER ;
 
 -- FOR TESTING
@@ -229,3 +230,44 @@ CREATE VIEW `all_classes` AS
     WHERE
         ((YEAR(CURDATE()) - `C`.`StartYear`) <= 9)
     ORDER BY (YEAR(CURDATE()) - `C`.`StartYear`) , `P`.`ShortName`;
+
+USE `szkola`;
+CREATE `students` AS
+    SELECT
+        `U`.`UserID` AS `UserID`,
+        `U`.`Name` AS `Name`,
+        `U`.`Surname` AS `Surname`,
+        `U`.`Email` AS `Email`,
+        `U`.`Address` AS `Address`,
+        `U`.`PESEL` AS `PESEL`,
+        `C`.`ClassID` AS `ClassID`,
+        (YEAR(CURDATE()) - `C`.`StartYear`) AS `ClassYear`,
+        `P`.`ShortName` AS `ClassShortName`
+    FROM
+        ((`User` `U`
+        JOIN `Class` `C` ON ((`C`.`ClassID` = `U`.`ClassID`)))
+        JOIN `Profile` `P` ON ((`P`.`ProfileID` = `C`.`ProfileID`)))
+    WHERE
+        ((`U`.`UserRoleID` = 1)
+            AND ((YEAR(CURDATE()) - `C`.`StartYear`) <= 9))
+    ORDER BY `U`.`Surname` , `U`.`Name`
+
+CREATE VIEW `gade_values_with_issuer` AS
+    SELECT
+        `G`.`GradeID` AS `GradeID`,
+        `G`.`SubjectID` AS `SubjectID`,
+        `G`.`Issuer_UserID` AS `Issuer_UserID`,
+        `G`.`Owner_UserID` AS `OwnerUserID`,
+        `G`.`Weight` AS `Weight`,
+        `G`.`IssuedAt` AS `IssuedAt`,
+        `GV`.`GradeValueID` AS `GradeValueID`,
+        `GV`.`NumericValue` AS `NumericValue`,
+        `GV`.`SymbolicValue` AS `SymbolicValue`,
+        `GV`.`Name` AS `Name`,
+        `GV`.`ShortName` AS `ShortName`,
+        `U`.`Name` AS `IssuerName`,
+        `U`.`Surname` AS `IssuerSurname`
+    FROM
+        ((`Grade` `G`
+        JOIN `GradeValue` `GV` ON ((`GV`.`GradeValueID` = `G`.`GradeValueID`)))
+        JOIN `User` `U` ON ((`U`.`UserID` = `G`.`Issuer_UserID`)))

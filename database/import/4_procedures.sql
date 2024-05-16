@@ -158,3 +158,26 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+DELIMITER $$
+USE `szkola`$$
+CREATE PROCEDURE `student_overall_gpa` (IN studentId int)
+BEGIN
+	select (SUM(G.Weight*GV.NumericValue)/SUM(G.Weight)) as Average from Grade G inner join GradeValue GV on GV.GradeValueID = G.GradeValueID WHERE G.Owner_UserID = studentId;
+END$$
+
+DELIMITER ;
+
+USE `szkola`;
+DROP procedure IF EXISTS `student_subjects_gpas`;
+
+DELIMITER $$
+USE `szkola`$$
+CREATE PROCEDURE `student_subjects_gpas` (in userIdParam int)
+BEGIN
+	select (SUM(G.Weight*GV.NumericValue)/SUM(G.Weight)) as GPA, S.Name, S.SubjectID from Grade G inner join GradeValue GV on GV.GradeValueID = G.GradeValueID inner join Subject S on S.SubjectID = G.SubjectID WHERE G.Owner_UserID = userIdParam GROUP BY S.SubjectID;
+END$$
+
+DELIMITER ;
+
+

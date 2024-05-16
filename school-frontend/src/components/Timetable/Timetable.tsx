@@ -1,9 +1,9 @@
 'use client';
 
-import { Table } from 'antd';
+import { Collapse, Table } from 'antd';
 import Link from 'next/link';
 import React, { useMemo } from 'react';
-import { groupBy } from 'lodash';
+import { groupBy, times } from 'lodash';
 import { ascendingBy } from '~/utils/arrayUtils';
 import classes from './Timetable.module.css';
 import dayjs from 'dayjs';
@@ -36,22 +36,25 @@ export const Timetable: React.FC<TimetableProps> = ({ data: rawData }) => {
     );
 
     return (
-        <Table
-            expandable={{
-                expandedRowRender: ([_, data]) => (
+        <Collapse
+            accordion
+            items={data.map(([dayName, dayTimetable], index) => ({
+                key: index,
+                label: dayName,
+                children: (
                     <Table
                         columns={[
                             {
                                 title: 'Start time',
                                 dataIndex: 'timeStart',
                                 render: val =>
-                                    dayjs(val, 'HH:mm:ss', true).format('H:mm'),
+                                    dayjs(val, 'HH:mm:ss').format('H:mm'),
                             },
                             {
                                 title: 'End time',
                                 dataIndex: 'timeEnd',
                                 render: val =>
-                                    dayjs(val, 'HH:mm:ss', true).format('H:mm'),
+                                    dayjs(val, 'HH:mm:ss').format('H:mm'),
                             },
                             {
                                 title: 'Subject',
@@ -88,21 +91,13 @@ export const Timetable: React.FC<TimetableProps> = ({ data: rawData }) => {
                                     ),
                             },
                         ]}
-                        dataSource={data}
+                        dataSource={dayTimetable}
+                        rowKey={({ timeStart, timeEnd }) => timeStart + timeEnd}
                         pagination={false}
                     />
                 ),
-                defaultExpandedRowKeys: ['0'],
-            }}
-            columns={[
-                {
-                    dataIndex: '0',
-                },
-            ]}
-            showHeader={false}
-            rowKey={([dayName]) => dayName}
-            dataSource={data}
-            pagination={false}
+            }))}
+            defaultActiveKey={0}
         />
     );
 };

@@ -1,0 +1,34 @@
+.layout {
+    max-height: 100dvh;
+}
+
+.content {
+    padding: 12px 18px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr) 2fr;
+    grid-template-rows: repeat(2, auto);
+    grid-template-areas:
+        'data className gpa .'
+        'grades grades timetable timetable';
+    gap: 12px;
+}
+
+.data {
+    grid-area: data;
+}
+
+.className {
+    grid-area: className;
+}
+
+.gpa {
+    grid-area: gpa;
+}
+
+.grades {
+    grid-area: grades;
+}
+
+.timetable {
+    grid-area: timetable;
+}
