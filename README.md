@@ -3,8 +3,10 @@ W ramach przedmiotu Zawansowane architektury baz danych stworzony został system
 
 Struktura bazy danych przedstawiona została za pomocą diagramu ERD w pliku newSchema.png.
 
-# Uruchomienie
+# Uruchomienie bazy
 W celu uruchomienia systemu bazodanowego należy wykonać komendę `docker-compose up` w katalogu z plikiem docker-compose.yml.
+
+# Uruchomienie aplikacji do prezentacji
 
 # PROCEDURY
 1. Wykorzystana w trigerze nr 1, 4 - sprawdza czy dana klasa zakonczyla juz swoja edukacje
