@@ -88,6 +88,7 @@ export default async function ClassPage({
                     className={classes.timetable}
                 >
                     <Timetable
+                        version="student"
                         data={(timetableData as any[]).map(
                             ({
                                 TimeStart,
@@ -107,6 +108,8 @@ export default async function ClassPage({
                                 subject: SubjectName,
                                 teacherId: Teacher_UserID,
                                 teacher: `${TeacherName} ${TeacherSurname}`,
+                                classId: +classId,
+                                className: `${ClassYear}${ShortName}`,
                                 replacementTeacherId: ReplacementTeacher_UserID,
                                 replacementTeacher:
                                     ReplacementTeacher_UserID !== null

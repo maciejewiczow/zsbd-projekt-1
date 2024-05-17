@@ -4,10 +4,12 @@ import { db } from '~/lib/db';
 
 interface UserTimetableProps {
     userId: number;
+    version: 'student' | 'teacher';
 }
 
 export const UserTimetable: React.FC<UserTimetableProps> = async ({
     userId,
+    version,
 }) => {
     const [[timetableData]] = await db.raw('call lesson_plan_for_user(?)', [
         userId,
@@ -15,6 +17,7 @@ export const UserTimetable: React.FC<UserTimetableProps> = async ({
 
     return (
         <Timetable
+            version={version}
             data={(timetableData as any[]).map(
                 ({
                     TimeStart,
@@ -27,6 +30,9 @@ export const UserTimetable: React.FC<UserTimetableProps> = async ({
                     ReplacementTeacher_UserID,
                     ReplacementTeacherName,
                     ReplacementTeacherSurname,
+                    ClassID,
+                    ClassYear,
+                    ClassShortName,
                 }) => ({
                     dayNumber: DayNumber,
                     timeStart: TimeStart,
@@ -35,6 +41,8 @@ export const UserTimetable: React.FC<UserTimetableProps> = async ({
                     teacherId: Teacher_UserID,
                     teacher: `${TeacherName} ${TeacherSurname}`,
                     replacementTeacherId: ReplacementTeacher_UserID,
+                    classId: ClassID,
+                    className: ClassYear + ClassShortName,
                     replacementTeacher:
                         ReplacementTeacher_UserID !== null
                             ? `${ReplacementTeacherName} ${ReplacementTeacherSurname}`

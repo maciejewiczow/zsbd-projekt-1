@@ -1,6 +1,6 @@
 'use client';
 
-import { Collapse, Table } from 'antd';
+import { Collapse, Empty, Table } from 'antd';
 import Link from 'next/link';
 import React, { useMemo } from 'react';
 import { groupBy, times } from 'lodash';
@@ -17,13 +17,19 @@ interface TimetableData {
     replacementTeacher: string | null;
     replacementTeacherId: number | null;
     subject: string;
+    className: string;
+    classId: number;
 }
 
 interface TimetableProps {
+    version: 'teacher' | 'student';
     data: TimetableData[];
 }
 
-export const Timetable: React.FC<TimetableProps> = ({ data: rawData }) => {
+export const Timetable: React.FC<TimetableProps> = ({
+    data: rawData,
+    version,
+}) => {
     const data = useMemo(
         () =>
             Object.entries(groupBy(rawData, ({ dayNumber }) => dayNumber))
@@ -34,6 +40,10 @@ export const Timetable: React.FC<TimetableProps> = ({ data: rawData }) => {
                 ),
         [rawData],
     );
+
+    if (data.length === 0) {
+        return <Empty description="No classes" />;
+    }
 
     return (
         <Collapse
@@ -60,36 +70,50 @@ export const Timetable: React.FC<TimetableProps> = ({ data: rawData }) => {
                                 title: 'Subject',
                                 dataIndex: 'subject',
                             },
-                            {
-                                title: 'Teacher',
-                                dataIndex: 'teacher',
-                                render: (
-                                    val,
-                                    {
-                                        teacherId,
-                                        replacementTeacher,
-                                        replacementTeacherId,
-                                    },
-                                ) =>
-                                    !replacementTeacherId ? (
-                                        <Link href={`/teaches/${teacherId}`}>
-                                            {val}
-                                        </Link>
-                                    ) : (
-                                        <>
-                                            <span
-                                                className={classes.oldTeacher}
-                                            >
-                                                {val}
-                                            </span>{' '}
-                                            <Link
-                                                href={`/teachers/${replacementTeacherId}`}
-                                            >
-                                                {replacementTeacher}
-                                            </Link>
-                                        </>
-                                    ),
-                            },
+                            version === 'student'
+                                ? {
+                                      title: 'Teacher',
+                                      dataIndex: 'teacher',
+                                      render: (
+                                          val,
+                                          {
+                                              teacherId,
+                                              replacementTeacher,
+                                              replacementTeacherId,
+                                          },
+                                      ) =>
+                                          !replacementTeacherId ? (
+                                              <Link
+                                                  href={`/teachers/${teacherId}`}
+                                              >
+                                                  {val}
+                                              </Link>
+                                          ) : (
+                                              <>
+                                                  <span
+                                                      className={
+                                                          classes.oldTeacher
+                                                      }
+                                                  >
+                                                      {val}
+                                                  </span>{' '}
+                                                  <Link
+                                                      href={`/teachers/${replacementTeacherId}`}
+                                                  >
+                                                      {replacementTeacher}
+                                                  </Link>
+                                              </>
+                                          ),
+                                  }
+                                : {
+                                      title: 'Class',
+                                      dataIndex: 'className',
+                                      render: (name, { classId }) => (
+                                          <Link href={`/classes/${classId}`}>
+                                              {name}
+                                          </Link>
+                                      ),
+                                  },
                         ]}
                         dataSource={dayTimetable}
                         rowKey={({ timeStart, timeEnd }) => timeStart + timeEnd}

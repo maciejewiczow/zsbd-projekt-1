@@ -101,7 +101,7 @@ begin
             ORDER BY
             TInner.DayNumber ASC,
             TInner.TimeStart ASC;
-    END
+    END$
 DELIMITER ;
 
 -- FOR TESTING
@@ -232,7 +232,7 @@ CREATE VIEW `all_classes` AS
     ORDER BY (YEAR(CURDATE()) - `C`.`StartYear`) , `P`.`ShortName`;
 
 USE `szkola`;
-CREATE `students` AS
+CREATE VIEW `students` AS
     SELECT
         `U`.`UserID` AS `UserID`,
         `U`.`Name` AS `Name`,
@@ -250,7 +250,7 @@ CREATE `students` AS
     WHERE
         ((`U`.`UserRoleID` = 1)
             AND ((YEAR(CURDATE()) - `C`.`StartYear`) <= 9))
-    ORDER BY `U`.`Surname` , `U`.`Name`
+    ORDER BY `U`.`Surname` , `U`.`Name`;
 
 CREATE VIEW `gade_values_with_issuer` AS
     SELECT
@@ -268,6 +268,9 @@ CREATE VIEW `gade_values_with_issuer` AS
         `U`.`Name` AS `IssuerName`,
         `U`.`Surname` AS `IssuerSurname`
     FROM
-        ((`Grade` `G`
-        JOIN `GradeValue` `GV` ON ((`GV`.`GradeValueID` = `G`.`GradeValueID`)))
-        JOIN `User` `U` ON ((`U`.`UserID` = `G`.`Issuer_UserID`)))
+        `Grade` `G`
+        JOIN `GradeValue` `GV` ON `GV`.`GradeValueID` = `G`.`GradeValueID`
+        JOIN `User` `U` ON `U`.`UserID` = `G`.`Issuer_UserID`;
+
+USE `szkola`;
+CREATE  OR REPLACE VIEW `teachers` AS select * from User where UserRoleID = 2;

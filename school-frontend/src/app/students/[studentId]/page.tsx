@@ -10,6 +10,7 @@ import { Layout } from '~/components/antd';
 import { Suspense } from 'react';
 import { UserTimetable } from '~/components/UserTimetable';
 import { GradesTable } from './GradesTable';
+import { PiStudentBold } from 'react-icons/pi';
 
 export default async function ClassPage({
     params: { studentId },
@@ -43,7 +44,7 @@ export default async function ClassPage({
         <Layout className={classes.layout}>
             <Header>
                 <h1>
-                    {Name} {Surname}
+                    <PiStudentBold size={28} /> {Name} {Surname}
                 </h1>
             </Header>
             <Content className={classes.content}>
@@ -86,7 +87,10 @@ export default async function ClassPage({
                     className={classes.timetable}
                 >
                     <Suspense fallback="Loading timetable...">
-                        <UserTimetable userId={+studentId} />
+                        <UserTimetable
+                            version="student"
+                            userId={+studentId}
+                        />
                     </Suspense>
                 </Card>
             </Content>
