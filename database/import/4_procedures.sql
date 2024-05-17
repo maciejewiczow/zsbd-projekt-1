@@ -116,7 +116,7 @@ END$$
 
 DELIMITER ;
 
---  3. Procedure - calculate ...
+--  3. Procedure - calculate overall class GPA
 
 DROP procedure IF EXISTS `calculate_class_gpa`;
 
@@ -129,7 +129,7 @@ END$$
 
 DELIMITER ;
 
---  4. Procedure - designate lesson plan for class
+--  4. Procedure - selects lesson plan for class with teachers and replacement teachers
 
 USE `szkola`;
 DROP procedure IF EXISTS `lesson_plan_for_class`;
@@ -162,7 +162,7 @@ END$$
 
 DELIMITER ;
 
---  5. Procedure - ...
+--  5. Procedure - calculates student overall GPA from all subjects that he is learning
 
 DELIMITER $$
 USE `szkola`$$
@@ -173,7 +173,7 @@ END$$
 
 DELIMITER ;
 
---  6. Procedure - ...
+--  6. Procedure - calculates GPA for each subject that the student is learning
 
 USE `szkola`;
 DROP procedure IF EXISTS `student_subjects_gpas`;

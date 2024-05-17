@@ -1,4 +1,4 @@
--- 1. View - List of all student grades
+-- 1. View - List of all grades for a given student
 use szkola;
 DELIMITER $
 create procedure all_students_grades(IN user_id int)
@@ -26,9 +26,11 @@ END $
 DELIMITER ;
 
 USE `szkola`;
+-- Selects all teachers from the users table. Is used as a base for other views
 CREATE OR REPLACE VIEW `teachers` AS select * from User where UserRoleID = 2;
 
 USE `szkola`;
+-- Selects all students of currently active classes from the users table. Is used as a base for other views
 CREATE VIEW `students` AS
     SELECT
         `U`.`UserID` AS `UserID`,
@@ -49,8 +51,6 @@ CREATE VIEW `students` AS
             AND ((YEAR(CURDATE()) - `C`.`StartYear`) <= 9))
     ORDER BY `U`.`Surname` , `U`.`Name`;
 
--- FOR TESTING
--- call all_students_grades(1);
 
 -- 2. View - List of class grades in a given subject (journal)
 use szkola;
@@ -76,7 +76,7 @@ DELIMITER ;
 -- FOR TESTING
 -- call all_grades_for_class_and_subject(1,1);
 
--- 3. View - Lesson plan for a given user
+-- 3. View - Lesson plan for a given user - either a teacher or a student. Also selects replacement teacher data if there is any
 use szkola;
 DELIMITER $
 CREATE PROCEDURE `lesson_plan_for_user`(IN param_user_id int)
@@ -131,7 +131,7 @@ DELIMITER ;
 -- FOR TESTING
 -- call lesson_plan_for_user(1);
 
--- 6. View - risk students with subject
+-- 6. View - selects all students that are at risk of failing some subjects, with the subject names in question
 create view risk_students_with_subject as
     SELECT
         Owner_UserID,
@@ -148,7 +148,7 @@ create view risk_students_with_subject as
 -- FOR TESTING
 -- select * from risk_students_with_subject;
 
--- 7. View - students eligible for the scholarship
+-- 7. View - selects a;; students eligible for a scholarship
 create view students_eligible_scholarship as
     SELECT
         U.UserID, U.Email, U.Name, U.Surname, U.Address, U.PESEL,
@@ -163,7 +163,7 @@ create view students_eligible_scholarship as
 -- FOR TESTING
 -- select * from students_eligible_scholarship;
 
--- 8. View - subjects for the teacher
+-- 8. View - Selects all subjects taught by a given teacher
 use szkola;
 DELIMITER $
 create procedure subjects_for_teacher(IN user_id int)
@@ -188,7 +188,7 @@ DELIMITER ;
 -- FOR TESTING
 -- call subjects_for_teacher(701);
 
--- 9. View - ...
+-- 9. View - selects all classes with their preceptor and class year
 
 CREATE VIEW `all_classes` AS
     SELECT
@@ -207,7 +207,7 @@ CREATE VIEW `all_classes` AS
     ORDER BY (YEAR(CURDATE()) - `C`.`StartYear`) , `P`.`ShortName`;
 
 
--- 5. View - top 10 classes
+-- 5. View - selects top 10 classes in the school in terms of GPA
 CREATE
     ALGORITHM = UNDEFINED
     DEFINER = `root`@`localhost`
@@ -235,7 +235,7 @@ VIEW `top_10_classes` AS
 -- FOR TESTING
 -- select * from top_10_classes
 
--- 4. View - top 10 students
+-- 4. View - top 10 students - selects top 10 students in terms of overall student GPA
 CREATE VIEW `top_10_students` AS
     SELECT
         `Grade`.`Owner_UserID` AS `Owner_UserID`,
@@ -263,7 +263,7 @@ CREATE VIEW `top_10_students` AS
 -- FOR TESTING
 -- select * from top_10_students;
 
--- 10. View - ...
+-- 10. View - selects all grades with their value and issuer data
 
 CREATE VIEW `gade_values_with_issuer` AS
     SELECT
@@ -284,3 +284,5 @@ CREATE VIEW `gade_values_with_issuer` AS
         `Grade` `G`
         JOIN `GradeValue` `GV` ON `GV`.`GradeValueID` = `G`.`GradeValueID`
         JOIN `User` `U` ON `U`.`UserID` = `G`.`Issuer_UserID`;
+
+-- example usage: select * from gade_values_with_issuer where OwnerUserID = 2
