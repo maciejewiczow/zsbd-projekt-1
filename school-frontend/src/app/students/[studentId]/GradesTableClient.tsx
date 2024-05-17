@@ -6,8 +6,9 @@ import { round } from 'lodash';
 import React, { useMemo } from 'react';
 import { descendingBy } from '~/utils/arrayUtils';
 import Link from 'next/link';
-import { AddGradeModal } from './AddGradeModal';
+import { AddOrModifyGradeModal } from './AddOrModifyGradeModal';
 import { FaTrashAlt } from 'react-icons/fa';
+import classes from './page.module.css';
 
 interface GradeData {
     name: string;
@@ -18,6 +19,7 @@ interface GradeData {
     issuerName: string;
     issuedAt: Date;
     weight: number;
+    gradeValueId: number;
 }
 
 interface Average {
@@ -37,15 +39,17 @@ interface GradesTableClientProps {
     teachers: any[];
     onGradeSubmit: (subjectId: number, formData: any) => Promise<void>;
     onGradeDelete: (gradeId: number) => Promise<void>;
+    onGradeUpdate: (gradeId: number, formData: any) => Promise<void>;
 }
 
 export const GradesTableClient: React.FC<GradesTableClientProps> = ({
     grades,
     averages,
-    gradeValues,
-    onGradeSubmit,
+    gradeValues: gradeValuesProp,
     teachers,
+    onGradeSubmit,
     onGradeDelete,
+    onGradeUpdate,
 }) => {
     const gradeData = useMemo(
         () =>
@@ -60,6 +64,13 @@ export const GradesTableClient: React.FC<GradesTableClientProps> = ({
                     .toSorted(descendingBy(({ issuedAt }) => +issuedAt)),
             })),
         [grades, averages],
+    );
+
+    const gradeValues = gradeValuesProp.map(
+        ({ GradeValueID, SymbolicValue }) => ({
+            id: GradeValueID,
+            name: SymbolicValue,
+        }),
     );
 
     return (
@@ -109,19 +120,60 @@ export const GradesTableClient: React.FC<GradesTableClientProps> = ({
                                 },
                                 {
                                     title: 'Actions',
-                                    render: (_, { id }) => (
-                                        <form
-                                            action={onGradeDelete.bind(
-                                                null,
-                                                id,
-                                            )}
+                                    render: (
+                                        _,
+                                        {
+                                            id,
+                                            subjectId,
+                                            gradeValueId,
+                                            issuerId,
+                                            weight,
+                                        },
+                                    ) => (
+                                        <div
+                                            className={classes.gradeActionsRow}
                                         >
-                                            <Button
-                                                icon={<FaTrashAlt />}
-                                                htmlType="submit"
-                                                danger
+                                            <AddOrModifyGradeModal
+                                                teachers={teachers
+                                                    .filter(
+                                                        ({ SubjectID }) =>
+                                                            SubjectID ===
+                                                            subjectId,
+                                                    )
+                                                    .map(
+                                                        ({
+                                                            Name,
+                                                            Surname,
+                                                            UserID,
+                                                        }) => ({
+                                                            id: UserID,
+                                                            name: `${Name} ${Surname}`,
+                                                        }),
+                                                    )}
+                                                gradeValues={gradeValues}
+                                                onSubmit={onGradeUpdate.bind(
+                                                    null,
+                                                    id,
+                                                )}
+                                                grade={{
+                                                    gradeValueId,
+                                                    issuerId,
+                                                    weight,
+                                                }}
                                             />
-                                        </form>
+                                            <form
+                                                action={onGradeDelete.bind(
+                                                    null,
+                                                    id,
+                                                )}
+                                            >
+                                                <Button
+                                                    icon={<FaTrashAlt />}
+                                                    htmlType="submit"
+                                                    danger
+                                                />
+                                            </form>
+                                        </div>
                                     ),
                                 },
                             ]}
@@ -141,13 +193,8 @@ export const GradesTableClient: React.FC<GradesTableClientProps> = ({
                     {
                         title: 'Actions',
                         render: (_, { subjectId, subjectName }) => (
-                            <AddGradeModal
-                                gradeValues={gradeValues.map(
-                                    ({ GradeValueID, SymbolicValue }) => ({
-                                        id: GradeValueID,
-                                        name: SymbolicValue,
-                                    }),
-                                )}
+                            <AddOrModifyGradeModal
+                                gradeValues={gradeValues}
                                 teachers={teachers
                                     .filter(
                                         ({ SubjectID }) =>

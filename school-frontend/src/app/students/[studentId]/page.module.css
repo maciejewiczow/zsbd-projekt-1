@@ -32,3 +32,9 @@
 .timetable {
     grid-area: timetable;
 }
+
+.gradeActionsRow {
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+}

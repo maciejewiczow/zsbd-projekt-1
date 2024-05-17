@@ -23,6 +23,7 @@ export const GradesTable: React.FC<GradesTableProps> = async ({
                 'SymbolicValue',
                 'IssuerName',
                 'IssuerSurname',
+                'GradeValueID',
             )
             .from('gade_values_with_issuer')
             .where('OwnerUserID', studentId),
@@ -56,6 +57,7 @@ export const GradesTable: React.FC<GradesTableProps> = async ({
                     SymbolicValue,
                     IssuerName,
                     IssuerSurname,
+                    GradeValueID,
                 }) => ({
                     id: GradeID,
                     issuedAt: IssuedAt,
@@ -64,6 +66,7 @@ export const GradesTable: React.FC<GradesTableProps> = async ({
                     weight: Weight,
                     name: Name,
                     symbolicValue: SymbolicValue,
+                    gradeValueId: GradeValueID,
                     issuerName: `${IssuerName} ${IssuerSurname}`,
                 }),
             )}
@@ -91,6 +94,21 @@ export const GradesTable: React.FC<GradesTableProps> = async ({
             onGradeDelete={async gradeId => {
                 'use server';
                 await db.delete().from('Grade').where('GradeID', gradeId);
+                revalidatePath('/students');
+            }}
+            onGradeUpdate={async (
+                gradeId: number,
+                { gradeValueId, issuerId, weight }: any,
+            ) => {
+                'use server';
+
+                await db('Grade')
+                    .update({
+                        GradeValueID: gradeValueId,
+                        Issuer_UserID: issuerId,
+                        Weight: weight,
+                    })
+                    .where('GradeID', gradeId);
                 revalidatePath('/students');
             }}
         />

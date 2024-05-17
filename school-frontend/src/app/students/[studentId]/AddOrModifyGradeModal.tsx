@@ -3,6 +3,7 @@
 import { Button, Form, FormInstance, Modal, Select, Slider } from 'antd';
 import React, { useRef, useState } from 'react';
 import { GoPlus } from 'react-icons/go';
+import { MdEdit } from 'react-icons/md';
 
 interface TeacherData {
     name: string;
@@ -14,18 +15,24 @@ interface GradeValueData {
     name: string;
 }
 
-interface AddGradeModalProps {
+interface AddOrModifyGradeModalProps {
     onSubmit: (formData: any) => Promise<void>;
     teachers: TeacherData[];
     gradeValues: GradeValueData[];
-    subjectName: string;
+    subjectName?: string;
+    grade?: {
+        weight: number;
+        gradeValueId: number;
+        issuerId: number;
+    };
 }
 
-export const AddGradeModal: React.FC<AddGradeModalProps> = ({
+export const AddOrModifyGradeModal: React.FC<AddOrModifyGradeModalProps> = ({
     teachers,
     gradeValues,
     onSubmit,
     subjectName,
+    grade,
 }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const formRef = useRef<FormInstance<any>>(null);
@@ -33,23 +40,35 @@ export const AddGradeModal: React.FC<AddGradeModalProps> = ({
     return (
         <>
             <Button
-                size="small"
-                title="Add grade"
-                icon={<GoPlus />}
+                title={grade ? 'Modify grade' : 'Add grade'}
+                icon={grade ? <MdEdit /> : <GoPlus />}
                 onClick={() => setIsModalOpen(true)}
             />
             <Modal
                 open={isModalOpen}
                 onCancel={() => setIsModalOpen(false)}
                 onOk={() => {
-                    console.log(formRef.current);
                     formRef.current?.submit();
+                    setIsModalOpen(false);
                 }}
-                title={`Add grade for ${subjectName}`}
+                title={
+                    subjectName
+                        ? `Add grade for ${subjectName}`
+                        : 'Modify grade'
+                }
             >
                 <Form
                     onFinish={onSubmit}
                     ref={formRef}
+                    initialValues={
+                        grade
+                            ? {
+                                  gradeValueId: grade.gradeValueId,
+                                  weight: grade.weight,
+                                  issuerId: grade.issuerId,
+                              }
+                            : undefined
+                    }
                 >
                     <Form.Item
                         label="Grade"
