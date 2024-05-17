@@ -7,6 +7,7 @@ Struktura bazy danych przedstawiona została za pomocą diagramu ERD w pliku new
 W celu uruchomienia systemu bazodanowego należy wykonać komendę `docker-compose up` w katalogu z plikiem docker-compose.yml.
 
 # Uruchomienie aplikacji do prezentacji
+W celu uruchomienia aplikacji webowej nalezy wykonac kmende `npm run dev` w katalogu school-frontend.
 
 # PROCEDURY
 1. Wykorzystana w trigerze nr 1, 4 - sprawdza czy dana klasa zakonczyla juz swoja edukacje
