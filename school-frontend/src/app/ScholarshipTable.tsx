@@ -31,6 +31,7 @@ export const ScholarshipTable: React.FC<ScholarshipTableProps> = ({ data }) => (
                 render: val => round(val, 2).toFixed(2),
             },
         ]}
+        rowKey="studentId"
         dataSource={data}
     />
 );

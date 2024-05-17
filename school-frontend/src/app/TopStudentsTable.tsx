@@ -45,6 +45,7 @@ export const TopStudentsTable: React.FC<TopStudentsTableProps> = ({ data }) => (
                 ),
             },
         ]}
+        rowKey="studentId"
         pagination={false}
         dataSource={data}
     />

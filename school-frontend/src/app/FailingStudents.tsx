@@ -38,6 +38,7 @@ export const FailingStudentsTable: React.FC<FailingStudentsTableProps> = ({
                 render: val => round(val, 2).toFixed(2),
             },
         ]}
+        rowKey="studentId"
         dataSource={data}
     />
 );

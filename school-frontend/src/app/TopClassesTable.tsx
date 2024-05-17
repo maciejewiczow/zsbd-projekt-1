@@ -40,6 +40,7 @@ export const TopClassesTable: React.FC<TopClassesTableProps> = ({ data }) => (
                 ),
             },
         ]}
+        rowKey="classId"
         pagination={false}
         dataSource={data}
     />
