@@ -190,7 +190,7 @@ create view students_eligible_scholarship as
 -- FOR TESTING
 -- select * from students_eligible_scholarship;
 
--- 7. View - subjects for the teacher
+-- 8. View - subjects for the teacher
 use szkola;
 DELIMITER $
 create procedure subjects_for_teacher(IN user_id int)
@@ -214,6 +214,8 @@ DELIMITER ;
 
 -- FOR TESTING
 -- call subjects_for_teacher(701);
+
+-- 9. View - ...
 
 CREATE VIEW `all_classes` AS
     SELECT
@@ -251,6 +253,8 @@ CREATE VIEW `students` AS
         ((`U`.`UserRoleID` = 1)
             AND ((YEAR(CURDATE()) - `C`.`StartYear`) <= 9))
     ORDER BY `U`.`Surname` , `U`.`Name`;
+
+-- 10. View - ...
 
 CREATE VIEW `gade_values_with_issuer` AS
     SELECT

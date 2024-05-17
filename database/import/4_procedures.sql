@@ -116,6 +116,8 @@ END$$
 
 DELIMITER ;
 
+--  3. Procedure - calculate ...
+
 DROP procedure IF EXISTS `calculate_class_gpa`;
 
 DELIMITER $$
@@ -127,6 +129,7 @@ END$$
 
 DELIMITER ;
 
+--  4. Procedure - designate lesson plan for class
 
 USE `szkola`;
 DROP procedure IF EXISTS `lesson_plan_for_class`;
@@ -159,6 +162,8 @@ END$$
 
 DELIMITER ;
 
+--  5. Procedure - ...
+
 DELIMITER $$
 USE `szkola`$$
 CREATE PROCEDURE `student_overall_gpa` (IN studentId int)
@@ -167,6 +172,8 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+--  6. Procedure - ...
 
 USE `szkola`;
 DROP procedure IF EXISTS `student_subjects_gpas`;
