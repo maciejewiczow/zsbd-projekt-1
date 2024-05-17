@@ -11,6 +11,10 @@ W celu uruchomienia systemu bazodanowego należy wykonać komendę `docker-compo
 # PROCEDURY
 1. Wykorzystana w trigerze nr 1, 4 - sprawdza czy dana klasa zakonczyla juz swoja edukacje
 2. Wykorzystana w trigerze nr 2 - sprawdza czy dla danej klasy mozna dodac lekcje w danym czasie
+3. Wyliczenie średniej ocen klasy
+4. Wyznaczenie planu lekcji dla klasy
+5. Wyliczenie średniej ocen ucznia
+6. Wyliczenie sredniej ocen ucznia dla poszczegolnych przedmiotow
 
 # FUNKCJE
 1. Wykorzystana w trigerze nr 6, 7, 8, 9 - sprawdza czy uzytkownik jest studentem
@@ -43,4 +47,6 @@ W celu uruchomienia systemu bazodanowego należy wykonać komendę `docker-compo
 6. Lista uczniów klasy, którym wychodzą zagrożenia, z listą przedmiotów zagrożonych
 7. Lista uczniów kwalifikujących sie do stypendium/świadectwa z paskiem za średnią ocen
 8. Lista klas które uczy dany nauczyciel, z przedmiotami których tam uczy
+9. Lista klas z wychowawcami i wyliczonym rokiem (1,2,3 itp. klasa)
+10. Lista wszystkich ocen z wartosciami i nauczyicelem wystawiajacym
 
