@@ -13,6 +13,7 @@ import { PiStudentBold } from 'react-icons/pi';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { GiTeacher } from 'react-icons/gi';
+import { FaHome } from 'react-icons/fa';
 
 import '~/utils/dayjs';
 
@@ -44,8 +45,15 @@ export default function RootLayout({ children }: PropsWithChildren) {
                                 activeKey={pathname}
                                 items={[
                                     {
-                                        label: <Link href="/">Classes</Link>,
+                                        label: <Link href="/">Overview</Link>,
                                         key: '/',
+                                        icon: <FaHome />,
+                                    },
+                                    {
+                                        label: (
+                                            <Link href="/classes">Classes</Link>
+                                        ),
+                                        key: '/classes',
                                         icon: <HiMiniUserGroup />,
                                     },
                                     {

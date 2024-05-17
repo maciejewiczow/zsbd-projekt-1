@@ -1,6 +1,7 @@
 import React from 'react';
 import { db } from '~/lib/db';
 import { GradesTableClient } from './GradesTableClient';
+import { revalidatePath } from 'next/cache';
 
 interface GradesTableProps {
     studentId: number;
@@ -9,7 +10,7 @@ interface GradesTableProps {
 export const GradesTable: React.FC<GradesTableProps> = async ({
     studentId,
 }) => {
-    const [[[averages]], grades] = await Promise.all([
+    const [[[averages]], grades, gradeValues, teachers] = await Promise.all([
         db.raw('call student_subjects_gpas(?)', [studentId]),
         db
             .select(
@@ -25,6 +26,16 @@ export const GradesTable: React.FC<GradesTableProps> = async ({
             )
             .from('gade_values_with_issuer')
             .where('OwnerUserID', studentId),
+        db
+            .select('GradeValueID', 'SymbolicValue')
+            .from('GradeValue')
+            .orderBy('NumericValue'),
+        db
+            .distinct('Name', 'Surname', 'UserID', 'SubjectID')
+            .from('teachers')
+            .innerJoin('ClassSubjectTeacher', {
+                'ClassSubjectTeacher.Teacher_UserID': 'teachers.UserID',
+            }),
     ]);
 
     return (
@@ -56,6 +67,32 @@ export const GradesTable: React.FC<GradesTableProps> = async ({
                     issuerName: `${IssuerName} ${IssuerSurname}`,
                 }),
             )}
+            teachers={teachers}
+            gradeValues={gradeValues}
+            onGradeSubmit={async (
+                subjectId: number,
+                { gradeValueId, issuerId, weight }: any,
+            ) => {
+                'use server';
+
+                await db
+                    .insert({
+                        SubjectID: subjectId,
+                        GradeValueID: gradeValueId,
+                        Issuer_UserID: issuerId,
+                        Owner_UserID: studentId,
+                        IssuedAT: undefined,
+                        Weight: weight,
+                    })
+                    .into('Grade');
+
+                revalidatePath('/students');
+            }}
+            onGradeDelete={async gradeId => {
+                'use server';
+                await db.delete().from('Grade').where('GradeID', gradeId);
+                revalidatePath('/students');
+            }}
         />
     );
 };
