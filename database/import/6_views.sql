@@ -25,6 +25,30 @@ create procedure all_students_grades(IN user_id int)
 END $
 DELIMITER ;
 
+USE `szkola`;
+CREATE OR REPLACE VIEW `teachers` AS select * from User where UserRoleID = 2;
+
+USE `szkola`;
+CREATE VIEW `students` AS
+    SELECT
+        `U`.`UserID` AS `UserID`,
+        `U`.`Name` AS `Name`,
+        `U`.`Surname` AS `Surname`,
+        `U`.`Email` AS `Email`,
+        `U`.`Address` AS `Address`,
+        `U`.`PESEL` AS `PESEL`,
+        `C`.`ClassID` AS `ClassID`,
+        (YEAR(CURDATE()) - `C`.`StartYear`) AS `ClassYear`,
+        `P`.`ShortName` AS `ClassShortName`
+    FROM
+        ((`User` `U`
+        JOIN `Class` `C` ON ((`C`.`ClassID` = `U`.`ClassID`)))
+        JOIN `Profile` `P` ON ((`P`.`ProfileID` = `C`.`ProfileID`)))
+    WHERE
+        ((`U`.`UserRoleID` = 1)
+            AND ((YEAR(CURDATE()) - `C`.`StartYear`) <= 9))
+    ORDER BY `U`.`Surname` , `U`.`Name`;
+
 -- FOR TESTING
 -- call all_students_grades(1);
 
@@ -107,62 +131,11 @@ DELIMITER ;
 -- FOR TESTING
 -- call lesson_plan_for_user(1);
 
--- 4. View - top 10 students
-create view top_10_students as
-    SELECT
-        Grade.Owner_UserID,
-        SUM(GV.NumericValue)/SUM(Grade.Weight) AverageGrade,
-        COUNT(Grade.GradeID) GradeCount,
-        U.Email, U.Name, U.Surname, U.Address, U.PESEL,
-        YEAR(CURRENT_DATE()) - C.StartYear Year,
-        P.ShortName,
-        P.FullName
-    FROM
-        Grade
-        INNER JOIN GradeValue GV on Grade.GradeValueID = GV.GradeValueID
-        INNER JOIN User U on Grade.Owner_UserID = U.UserID
-        INNER JOIN Class C on U.ClassID = C.ClassID
-        INNER JOIN Profile P on C.ProfileID = P.ProfileID
-    GROUP BY Grade.Owner_UserID
-    ORDER BY
-        AverageGrade DESC,
-        GradeCount DESC
-    LIMIT 10;
-
--- FOR TESTING
--- select * from top_10_students;
-
--- 5. View - top 10 classes
-create view top_10_classes as
-    SELECT
-        User.ClassID,
-        SUM(GV.NumericValue)/SUM(Grade.Weight) Average,
-        YEAR(CURRENT_DATE()) - C.StartYear Year,
-        P.ShortName Profile_ShortName,
-        P.FullName Profile_FullName,
-        U.Name Preceptor_Name,
-        U.Surname Preceptor_Surname,
-        U.Email Preceptor_Email,
-        C.Preceptor_UserID
-    FROM
-        Grade
-        INNER JOIN User ON Grade.Owner_UserID = User.UserID
-        INNER JOIN GradeValue GV on Grade.GradeValueID = GV.GradeValueID
-        INNER JOIN Class C on User.ClassID = C.ClassID
-        INNER JOIN Profile P on C.ProfileID = P.ProfileID
-        INNER JOIN User U on C.Preceptor_UserID = U.UserID
-    GROUP BY User.ClassID
-    Order BY Average DESC
-    LIMIT 10;
-
--- FOR TESTING
--- select * from top_10_classes;
-
 -- 6. View - risk students with subject
 create view risk_students_with_subject as
     SELECT
         Owner_UserID,
-        SUM(GV.NumericValue)/SUM(Grade.Weight) Average,
+        SUM(GV.NumericValue * Grade.Weight)/SUM(Grade.Weight) Average,
         S.Name,
         S.ShortName
     FROM
@@ -179,10 +152,10 @@ create view risk_students_with_subject as
 create view students_eligible_scholarship as
     SELECT
         U.UserID, U.Email, U.Name, U.Surname, U.Address, U.PESEL,
-        SUM(GV.NumericValue)/SUM(Grade.Weight) Average
+        SUM(GV.NumericValue * Grade.Weight)/SUM(Grade.Weight) Average
     FROM
         Grade
-        INNER JOIN User U on Grade.Owner_UserID = U.UserID
+        INNER JOIN students U on Grade.Owner_UserID = U.UserID
         INNER JOIN GradeValue GV on Grade.GradeValueID = GV.GradeValueID
     GROUP BY Grade.Owner_UserID
     HAVING Average >= 4.75;
@@ -233,26 +206,62 @@ CREATE VIEW `all_classes` AS
         ((YEAR(CURDATE()) - `C`.`StartYear`) <= 9)
     ORDER BY (YEAR(CURDATE()) - `C`.`StartYear`) , `P`.`ShortName`;
 
-USE `szkola`;
-CREATE VIEW `students` AS
+
+-- 5. View - top 10 classes
+CREATE
+    ALGORITHM = UNDEFINED
+    DEFINER = `root`@`localhost`
+    SQL SECURITY DEFINER
+VIEW `top_10_classes` AS
     SELECT
-        `U`.`UserID` AS `UserID`,
+        `User`.`ClassID` AS `ClassID`,
+        (SUM(`GV`.`NumericValue`*Grade.Weight) / SUM(`Grade`.`Weight`)) AS `Average`,
+        `C`.`ClassYear` AS `Year`,
+        `C`.`ShortName` AS `Profile_ShortName`,
+        `U`.`Name` AS `Preceptor_Name`,
+        `U`.`Surname` AS `Preceptor_Surname`,
+        `U`.`Email` AS `Preceptor_Email`,
+        `C`.`PerceptorID` AS `Preceptor_UserID`
+    FROM
+        ((((`Grade`
+        JOIN `User` ON ((`Grade`.`Owner_UserID` = `User`.`UserID`)))
+        JOIN `GradeValue` `GV` ON ((`Grade`.`GradeValueID` = `GV`.`GradeValueID`)))
+        JOIN `all_classes` `C` ON ((`User`.`ClassID` = `C`.`ClassID`)))
+        JOIN `User` `U` ON ((`C`.`PerceptorID` = `U`.`UserID`)))
+    GROUP BY `User`.`ClassID`
+    ORDER BY `Average` DESC
+    LIMIT 10;
+
+-- FOR TESTING
+-- select * from top_10_classes
+
+-- 4. View - top 10 students
+CREATE VIEW `top_10_students` AS
+    SELECT
+        `Grade`.`Owner_UserID` AS `Owner_UserID`,
+        (SUM((`GV`.`NumericValue` * `Grade`.`Weight`)) / SUM(`Grade`.`Weight`)) AS `AverageGrade`,
+        COUNT(`Grade`.`GradeID`) AS `GradeCount`,
+        `U`.`Email` AS `Email`,
         `U`.`Name` AS `Name`,
         `U`.`Surname` AS `Surname`,
-        `U`.`Email` AS `Email`,
         `U`.`Address` AS `Address`,
         `U`.`PESEL` AS `PESEL`,
-        `C`.`ClassID` AS `ClassID`,
-        (YEAR(CURDATE()) - `C`.`StartYear`) AS `ClassYear`,
-        `P`.`ShortName` AS `ClassShortName`
+        (YEAR(CURDATE()) - `C`.`StartYear`) AS `Year`,
+        `C`.`ClassID` as `ClassID`,
+        `P`.`ShortName` AS `ShortName`,
+        `P`.`FullName` AS `FullName`
     FROM
-        ((`User` `U`
-        JOIN `Class` `C` ON ((`C`.`ClassID` = `U`.`ClassID`)))
-        JOIN `Profile` `P` ON ((`P`.`ProfileID` = `C`.`ProfileID`)))
-    WHERE
-        ((`U`.`UserRoleID` = 1)
-            AND ((YEAR(CURDATE()) - `C`.`StartYear`) <= 9))
-    ORDER BY `U`.`Surname` , `U`.`Name`;
+        ((((`Grade`
+        JOIN `GradeValue` `GV` ON ((`Grade`.`GradeValueID` = `GV`.`GradeValueID`)))
+        JOIN `students` `U` ON ((`Grade`.`Owner_UserID` = `U`.`UserID`)))
+        JOIN `Class` `C` ON ((`U`.`ClassID` = `C`.`ClassID`)))
+        JOIN `Profile` `P` ON ((`C`.`ProfileID` = `P`.`ProfileID`)))
+    GROUP BY `Grade`.`Owner_UserID`
+    ORDER BY `AverageGrade` DESC , `GradeCount` DESC
+    LIMIT 10;
+
+-- FOR TESTING
+-- select * from top_10_students;
 
 -- 10. View - ...
 
@@ -275,6 +284,3 @@ CREATE VIEW `gade_values_with_issuer` AS
         `Grade` `G`
         JOIN `GradeValue` `GV` ON `GV`.`GradeValueID` = `G`.`GradeValueID`
         JOIN `User` `U` ON `U`.`UserID` = `G`.`Issuer_UserID`;
-
-USE `szkola`;
-CREATE  OR REPLACE VIEW `teachers` AS select * from User where UserRoleID = 2;
