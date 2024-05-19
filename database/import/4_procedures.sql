@@ -187,4 +187,18 @@ END$$
 
 DELIMITER ;
 
+--  7. Procedure with transaction - add replacement teacher to timetable
 
+DELIMITER $$
+USE `szkola`$$
+
+CREATE PROCEDURE `add_replacement_teacher` (timetable_id INT, replacement_teacher_id INT)
+BEGIN
+    START TRANSACTION;
+        UPDATE szkola.Timetable 
+        SET ReplacementTeacher_UserID = replacement_teacher_id 
+        WHERE TimetableID = timetable_id;
+    COMMIT;
+END$$
+
+DELIMITER ;
