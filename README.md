@@ -16,7 +16,7 @@ W celu uruchomienia aplikacji webowej nalezy wykonac kmende `npm run dev` w kata
 4. Wyznaczenie planu lekcji dla klasy
 5. Wyliczenie średniej ocen ucznia
 6. Wyliczenie sredniej ocen ucznia dla poszczegolnych przedmiotow
-7. Procedura wykorzystująca transkację - wstawienie zastpępstwa dla danych zajec z danym nauczycielem
+7. Procedura wykorzystująca transkację - wstawienie zastępstwa dla danych zajec z danym nauczycielem
 
 # FUNKCJE
 1. Wykorzystana w trigerze nr 6, 7, 8, 9 - sprawdza czy uzytkownik jest studentem
